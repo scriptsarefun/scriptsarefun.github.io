@@ -24,7 +24,6 @@
             transition: all 0.5s ease;
         }
 
-        /* Matrix Mode Styles */
         body.matrix-mode {
             --bg-color: #000000;
             --text-color: #00ff00;
@@ -140,37 +139,33 @@
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
 
-        <!-- Upgrades Section -->
         <div class="panel">
-            <h3>Buy Background Tracks</h3>
+            <h3>Buy & Unlock Background Tracks</h3>
             <div id="upgrades-container"></div>
         </div>
 
-        <!-- Matrix Mode Code Entry -->
         <div id="secret-section">
             <p>Enter Secret Code:</p>
             <input type="password" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
         </div>
 
-        <!-- Go Back Button -->
         <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
     </div>
 
     <script>
-        // Game State
         let score = 0;
         let beatsPerSecond = 0;
+        let currentAudio = null;
 
-        // 5 Upgradeable Music Tracks
+        // Upgrades with real music URLs (Royalty Free Archive Files)
         const upgrades = [
-            { id: 1, name: "Lo-Fi Background Hum", cost: 15, bps: 1, count: 0 },
-            { id: 2, name: "Synthwave Bassline", cost: 100, bps: 5, count: 0 },
-            { id: 3, name: "Acoustic Drum Loop", cost: 500, bps: 25, count: 0 },
-            { id: 4, name: "Electric Guitar Riff", cost: 3000, bps: 100, count: 0 },
-            { id: 5, name: "Orchestral Drop", cost: 10000, bps: 500, count: 0 }
+            { id: 1, name: "Lo-Fi Chill Beat", cost: 15, bps: 1, count: 0, url: "https://archive.org" },
+            { id: 2, name: "Synthwave Bassline", cost: 100, bps: 5, count: 0, url: "https://archive.org" },
+            { id: 3, name: "Upbeat House Loop", cost: 500, bps: 25, count: 0, url: "https://archive.org" },
+            { id: 4, name: "Heavy Rock Riff", cost: 3000, bps: 100, count: 0, url: "https://archive.org" },
+            { id: 5, name: "Cyberpunk Matrix Track", cost: 10000, bps: 500, count: 0, url: "https://archive.org" }
         ];
 
-        // Initialize UI
         function initGame() {
             const container = document.getElementById('upgrades-container');
             container.innerHTML = '';
@@ -191,32 +186,39 @@
             updateUI();
         }
 
-        // Click Action
         function clickBeats() {
-            // In matrix mode, clicking yields 10x power
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
             score += multiplier;
             updateUI();
         }
 
-        // Buy Logic
         function buyUpgrade(id) {
             const upgrade = upgrades.find(up => up.id === id);
             if (score >= upgrade.cost) {
                 score -= upgrade.cost;
                 upgrade.count++;
-                upgrade.cost = Math.floor(upgrade.cost * 1.15); // Increase cost
+                upgrade.cost = Math.floor(upgrade.cost * 1.15);
                 calculateBPS();
+                playTrack(upgrade.url); // Plays the newest unlocked song automatically
                 updateUI();
             }
         }
 
-        // Calculate BPS
+        // Logic to switch background music tracks seamlessly
+        function playTrack(url) {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+            currentAudio = new Audio(url);
+            currentAudio.loop = true;
+            currentAudio.volume = 0.5; // Half volume so it isn't too loud
+            currentAudio.play().catch(e => console.log("Audio waiting for user click interaction."));
+        }
+
         function calculateBPS() {
             beatsPerSecond = upgrades.reduce((total, up) => total + (up.count * up.bps), 0);
         }
 
-        // Update Text and Buttons
         function updateUI() {
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('bps').innerText = beatsPerSecond;
@@ -225,11 +227,10 @@
                 document.getElementById(`count-${up.id}`).innerText = up.count;
                 const btn = document.getElementById(`btn-${up.id}`);
                 btn.innerText = `Cost: ${up.cost}`;
-                btn.disabled = score < upgrade.cost;
+                btn.disabled = score < up.cost;
             });
         }
 
-        // Code Check for Matrix Mode
         function checkCode() {
             const input = document.getElementById('matrix-code').value;
             if (input === '999') {
@@ -237,32 +238,34 @@
             }
         }
 
-        // Enter Matrix Mode
         function enterMatrixMode() {
             document.body.classList.add('matrix-mode');
             document.getElementById('game-title').innerText = "⚡ THE MATRIX MAINIC ⚡";
             document.getElementById('click-trigger').innerText = "TAP THE CODE";
             document.getElementById('secret-section').style.display = 'none';
             document.getElementById('back-button').style.display = 'inline-block';
-            document.getElementById('matrix-code').value = ''; // Reset input
+            document.getElementById('matrix-code').value = '';
+            
+            // Forces the final cyberpunk song to play in Matrix mode
+            playTrack(upgrades[4].url);
         }
 
-        // Exit / Go Back Button Logic
         function exitMatrixMode() {
             document.body.classList.remove('matrix-mode');
             document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
             document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
             document.getElementById('secret-section').style.display = 'block';
             document.getElementById('back-button').style.display = 'none';
+            
+            // Revert back to the first track when exiting matrix
+            if(upgrades[0].count > 0) playTrack(upgrades[0].url);
         }
 
-        // Game Loop (Runs every 1 second)
         setInterval(() => {
             score += beatsPerSecond;
             updateUI();
         }, 1000);
 
-        // Start
         initGame();
     </script>
 </body>
