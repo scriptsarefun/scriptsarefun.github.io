@@ -178,17 +178,16 @@
         let beatsPerSecond = 0;
         let globalVolume = 0.5;
 
-        // Native Audio Synthesis Engine (Bypasses URLs completely)
         let audioCtx = null;
         let mainGainNode = null;
         let musicInterval = null;
-        let currentSequence = 0;
 
+        // Fully declared note frequencies for the synth sequence loops
         const upgrades = [
-            { id: 1, name: "Sub-Bass Hum Generator", cost: 15, bps: 1, count: 0, notes: [110, 130, 110, 146] },
-            { id: 2, name: "Retro Chiptune Arpeggiator", cost: 100, bps: 5, count: 0, notes: [220, 261, 329, 392] },
-            { id: 3, name: "Industrial Techno Pulse", cost: 500, bps: 25, count: 0, notes: [164, 196, 220, 293] },
-            { id: 4, name: "Cyber Rave Oscillator", cost: 3000, bps: 100, count: 0, notes: [440, 523, 659, 783] },
+            { id: 1, name: "Sub-Bass Hum Generator", cost: 15, bps: 1, count: 0, notes: [110, 110, 130, 130] },
+            { id: 2, name: "Retro Chiptune Arpeggiator", cost: 100, bps: 5, count: 0, notes: [261, 329, 392, 523] },
+            { id: 3, name: "Industrial Techno Pulse", cost: 500, bps: 25, count: 0, notes: [146, 146, 220, 146] },
+            { id: 4, name: "Cyber Rave Oscillator", cost: 3000, bps: 100, count: 0, notes: [440, 494, 554, 659] },
             { id: 5, name: "Hyperdrive Melody Core", cost: 10000, bps: 500, count: 0, notes: [587, 698, 880, 1046] }
         ];
 
@@ -263,7 +262,6 @@
 
         function clickBeats() {
             initAudio();
-            // User click interaction feedback sound
             playSynthTone(440, 0.05, 'sine');
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
             score += multiplier;
@@ -299,3 +297,4 @@
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('bps').innerText = beatsPerSecond;
 
+            upgrades.forEach(up => {
