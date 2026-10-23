@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Music Clicker</title>
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #ffffff;
+            --accent-color: #e94560;
+            --panel-bg: #16213e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+        /* Matrix Mode Styles */
+        body.matrix-mode {
+            --bg-color: #000000;
+            --text-color: #00ff00;
+            --accent-color: #008f11;
+            --panel-bg: #0d1f0d;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .click-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .matrix-mode .click-btn {
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            background: transparent;
+        }
+
+        .click-btn:active {
+            transform: scale(0.95);
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .upgrade-item:last-child {
+            border-bottom: none;
+        }
+
+        .buy-btn {
+            background-color: #0f3460;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .matrix-mode .buy-btn {
+            border: 1px solid #00ff00;
+            background: transparent;
+            color: #00ff00;
+        }
+
+        .buy-btn:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .secret-input {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: none;
+            margin-top: 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
+        
+        <div class="score-display">Beats: <span id="score">0</span></div>
+        <div style="margin-bottom: 10px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        
+        <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
+
+        <!-- Upgrades Section -->
+        <div class="panel">
+            <h3>Buy Background Tracks</h3>
+            <div id="upgrades-container"></div>
+        </div>
+
+        <!-- Matrix Mode Code Entry -->
+        <div id="secret-section">
+            <p>Enter Secret Code:</p>
+            <input type="password" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
+        </div>
+
+        <!-- Go Back Button -->
+        <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
+    </div>
+
+    <script>
+        // Game State
+        let score = 0;
+        let beatsPerSecond = 0;
+
+        // 5 Upgradeable Music Tracks
+        const upgrades = [
+            { id: 1, name: "Lo-Fi Background Hum", cost: 15, bps: 1, count: 0 },
+            { id: 2, name: "Synthwave Bassline", cost: 100, bps: 5, count: 0 },
+            { id: 3, name: "Acoustic Drum Loop", cost: 500, bps: 25, count: 0 },
+            { id: 4, name: "Electric Guitar Riff", cost: 3000, bps: 100, count: 0 },
+            { id: 5, name: "Orchestral Drop", cost: 10000, bps: 500, count: 0 }
+        ];
+
+        // Initialize UI
+        function initGame() {
+            const container = document.getElementById('upgrades-container');
+            container.innerHTML = '';
+            
+            upgrades.forEach(up => {
+                container.innerHTML += `
+                    <div class="upgrade-item" id="item-${up.id}">
+                        <div>
+                            <strong>${up.name}</strong><br>
+                            <small>Gives +${up.bps} BPS | Owned: <span id="count-${up.id}">0</span></small>
+                        </div>
+                        <button class="buy-btn" id="btn-${up.id}" onclick="buyUpgrade(${up.id})">
+                            Cost: ${up.cost}
+                        </button>
+                    </div>
+                `;
+            });
+            updateUI();
+        }
+
+        // Click Action
+        function clickBeats() {
+            // In matrix mode, clicking yields 10x power
+            const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
+            score += multiplier;
+            updateUI();
+        }
+
+        // Buy Logic
+        function buyUpgrade(id) {
+            const upgrade = upgrades.find(up => up.id === id);
+            if (score >= upgrade.cost) {
+                score -= upgrade.cost;
+                upgrade.count++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.15); // Increase cost
+                calculateBPS();
+                updateUI();
+            }
+        }
+
+        // Calculate BPS
+        function calculateBPS() {
+            beatsPerSecond = upgrades.reduce((total, up) => total + (up.count * up.bps), 0);
+        }
+
+        // Update Text and Buttons
+        function updateUI() {
+            document.getElementById('score').innerText = Math.floor(score);
+            document.getElementById('bps').innerText = beatsPerSecond;
+
+            upgrades.forEach(up => {
+                document.getElementById(`count-${up.id}`).innerText = up.count;
+                const btn = document.getElementById(`btn-${up.id}`);
+                btn.innerText = `Cost: ${up.cost}`;
+                btn.disabled = score < upgrade.cost;
+            });
+        }
+
+        // Code Check for Matrix Mode
+        function checkCode() {
+            const input = document.getElementById('matrix-code').value;
+            if (input === '999') {
+                enterMatrixMode();
+            }
+        }
+
+        // Enter Matrix Mode
+        function enterMatrixMode() {
+            document.body.classList.add('matrix-mode');
+            document.getElementById('game-title').innerText = "⚡ THE MATRIX MAINIC ⚡";
+            document.getElementById('click-trigger').innerText = "TAP THE CODE";
+            document.getElementById('secret-section').style.display = 'none';
+            document.getElementById('back-button').style.display = 'inline-block';
+            document.getElementById('matrix-code').value = ''; // Reset input
+        }
+
+        // Exit / Go Back Button Logic
+        function exitMatrixMode() {
+            document.body.classList.remove('matrix-mode');
+            document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
+            document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
+            document.getElementById('secret-section').style.display = 'block';
+            document.getElementById('back-button').style.display = 'none';
+        }
+
+        // Game Loop (Runs every 1 second)
+        setInterval(() => {
+            score += beatsPerSecond;
+            updateUI();
+        }, 1000);
+
+        // Start
+        initGame();
+    </script>
+</body>
+</html>
