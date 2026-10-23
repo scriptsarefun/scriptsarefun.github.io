@@ -158,13 +158,13 @@
         let currentAudio = null;
         let lastPlayedUrl = "";
 
-        // Verified Live Streaming Audio Tracks
+        // Louder, optimized high-fidelity audio assets
         const upgrades = [
-            { id: 1, name: "Chill Synth Loop", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
-            { id: 2, name: "Acoustic Funk Beats", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
-            { id: 3, name: "Electronic Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
-            { id: 4, name: "Heavy Breakbeat Rhythm", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
-            { id: 5, name: "Cyber Matrix Suite", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
+            { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
+            { id: 2, name: "Acoustic Funk Groove", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
+            { id: 3, name: "Club Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
+            { id: 4, name: "Fast Breakbeat Energy", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
+            { id: 5, name: "Cyber Arpeggio Overdrive", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
         ];
 
         function initGame() {
@@ -212,8 +212,8 @@
             }
             currentAudio = new Audio(url);
             currentAudio.loop = true;
-            currentAudio.volume = 0.6;
-            currentAudio.play().catch(e => console.log("Audio playback interaction caught."));
+            currentAudio.volume = 1.0; // Boosted volume from 0.6 to 1.0 (Full Blast)
+            currentAudio.play().catch(e => console.log("Interaction restriction caught."));
         }
 
         function calculateBPS() {
@@ -241,13 +241,13 @@
 
         function enterMatrixMode() {
             document.body.classList.add('matrix-mode');
-            document.getElementById('game-title').innerText = "⚡ THE MATRIX MAINIC ⚡";
+            document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
             document.getElementById('click-trigger').innerText = "TAP THE CODE";
             document.getElementById('secret-section').style.display = 'none';
             document.getElementById('back-button').style.display = 'inline-block';
             document.getElementById('matrix-code').value = '';
             
-            // Instantly plays the premium Tier 5 Cyber loop track
+            // Forces the high-intensity track 5 loop to kick on instantly at full blast
             playTrack(upgrades[4].url);
         }
 
@@ -258,7 +258,6 @@
             document.getElementById('secret-section').style.display = 'block';
             document.getElementById('back-button').style.display = 'none';
             
-            // Reverts to your highest bought track, or stops if none owned
             if (lastPlayedUrl) {
                 playTrack(lastPlayedUrl);
             } else if (currentAudio) {
