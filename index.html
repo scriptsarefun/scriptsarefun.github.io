@@ -156,14 +156,15 @@
         let score = 0;
         let beatsPerSecond = 0;
         let currentAudio = null;
+        let lastPlayedUrl = "";
 
-        // Upgrades with real music URLs (Royalty Free Archive Files)
+        // Verified Live Streaming Audio Tracks
         const upgrades = [
-            { id: 1, name: "Lo-Fi Chill Beat", cost: 15, bps: 1, count: 0, url: "https://archive.org" },
-            { id: 2, name: "Synthwave Bassline", cost: 100, bps: 5, count: 0, url: "https://archive.org" },
-            { id: 3, name: "Upbeat House Loop", cost: 500, bps: 25, count: 0, url: "https://archive.org" },
-            { id: 4, name: "Heavy Rock Riff", cost: 3000, bps: 100, count: 0, url: "https://archive.org" },
-            { id: 5, name: "Cyberpunk Matrix Track", cost: 10000, bps: 500, count: 0, url: "https://archive.org" }
+            { id: 1, name: "Chill Synth Loop", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
+            { id: 2, name: "Acoustic Funk Beats", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
+            { id: 3, name: "Electronic Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
+            { id: 4, name: "Heavy Breakbeat Rhythm", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
+            { id: 5, name: "Cyber Matrix Suite", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
         ];
 
         function initGame() {
@@ -199,20 +200,20 @@
                 upgrade.count++;
                 upgrade.cost = Math.floor(upgrade.cost * 1.15);
                 calculateBPS();
-                playTrack(upgrade.url); // Plays the newest unlocked song automatically
+                lastPlayedUrl = upgrade.url; 
+                playTrack(upgrade.url); 
                 updateUI();
             }
         }
 
-        // Logic to switch background music tracks seamlessly
         function playTrack(url) {
             if (currentAudio) {
                 currentAudio.pause();
             }
             currentAudio = new Audio(url);
             currentAudio.loop = true;
-            currentAudio.volume = 0.5; // Half volume so it isn't too loud
-            currentAudio.play().catch(e => console.log("Audio waiting for user click interaction."));
+            currentAudio.volume = 0.6;
+            currentAudio.play().catch(e => console.log("Audio playback interaction caught."));
         }
 
         function calculateBPS() {
@@ -246,7 +247,7 @@
             document.getElementById('back-button').style.display = 'inline-block';
             document.getElementById('matrix-code').value = '';
             
-            // Forces the final cyberpunk song to play in Matrix mode
+            // Instantly plays the premium Tier 5 Cyber loop track
             playTrack(upgrades[4].url);
         }
 
@@ -257,8 +258,12 @@
             document.getElementById('secret-section').style.display = 'block';
             document.getElementById('back-button').style.display = 'none';
             
-            // Revert back to the first track when exiting matrix
-            if(upgrades[0].count > 0) playTrack(upgrades[0].url);
+            // Reverts to your highest bought track, or stops if none owned
+            if (lastPlayedUrl) {
+                playTrack(lastPlayedUrl);
+            } else if (currentAudio) {
+                currentAudio.pause();
+            }
         }
 
         setInterval(() => {
