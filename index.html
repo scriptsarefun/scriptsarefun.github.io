@@ -135,12 +135,13 @@
         <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
         
         <div class="score-display">Beats: <span id="score">0</span></div>
-        <div style="margin-bottom: 10px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        <div style="margin-bottom: 5px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        <div style="margin-bottom: 15px; opacity: 0.8;">Beats Per Click (BPC): +<span id="bpc">1</span></div>
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
 
         <div class="panel">
-            <h3>Buy & Unlock Background Tracks</h3>
+            <h3>Buy & Unlock Upgrades</h3>
             <div id="upgrades-container"></div>
         </div>
 
@@ -155,18 +156,20 @@
     <script>
         let score = 0;
         let beatsPerSecond = 0;
+        let beatsPerClick = 1; // Tracks manual clicking worth
         let currentAudio = null;
         let lastPlayedUrl = "";
-        
-        // Setup internal audio generator context
         let synthCtx = null;
 
+        // Upgrades array housing both passive BPS and manual click power elements
         const upgrades = [
-            { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
-            { id: 2, name: "Acoustic Funk Groove", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
-            { id: 3, name: "Club Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
-            { id: 4, name: "Fast Breakbeat Energy", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
-            { id: 5, name: "Cyber Arpeggio Overdrive", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
+            { id: 1, name: "Golden Finger Tapes", cost: 10, value: 1, type: "click", count: 0, url: "" },
+            { id: 2, name: "Upbeat Synth Theme", cost: 15, value: 1, type: "bps", count: 0, url: "https://wikimedia.org" },
+            { id: 3, name: "Heavy Mechanical Switches", cost: 80, value: 5, type: "click", count: 0, url: "" },
+            { id: 4, name: "Acoustic Funk Groove", cost: 100, value: 5, type: "bps", count: 0, url: "https://wikimedia.org" },
+            { id: 5, name: "Club Techno Pulse", cost: 500, value: 25, type: "bps", count: 0, url: "https://wikimedia.org" },
+            { id: 6, name: "Fast Breakbeat Energy", cost: 3000, value: 100, type: "bps", count: 0, url: "https://wikimedia.org" },
+            { id: 7, name: "Cyber Arpeggio Overdrive", cost: 10000, value: 500, type: "bps", count: 0, url: "https://wikimedia.org" }
         ];
 
         function initGame() {
@@ -174,11 +177,13 @@
             container.innerHTML = '';
             
             upgrades.forEach(up => {
+                // Generates text descriptions dynamically depending on the upgrade type
+                let typeText = up.type === "click" ? `+${up.value} Per Click` : `+${up.value} BPS`;
                 container.innerHTML += `
                     <div class="upgrade-item" id="item-${up.id}">
                         <div>
                             <strong>${up.name}</strong><br>
-                            <small>Gives +${up.bps} BPS | Owned: <span id="count-${up.id}">0</span></small>
+                            <small>${typeText} | Owned: <span id="count-${up.id}">0</span></small>
                         </div>
                         <button class="buy-btn" id="btn-${up.id}" onclick="buyUpgrade(${up.id})">
                             Cost: ${up.cost}
@@ -189,18 +194,15 @@
             updateUI();
         }
 
-        // Native Synth Click Player (Bypasses URL blocks entirely)
         function playClickSound() {
             try {
                 if (!synthCtx) {
                     synthCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
                 let osc = synthCtx.createOscillator();
                 let gain = synthCtx.createGain();
                 
                 osc.type = 'sine';
-                // Generates a clean high-pitched electronic snap sound
                 osc.frequency.setValueAtTime(600, synthCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(100, synthCtx.currentTime + 0.04);
                 
@@ -218,9 +220,10 @@
         }
 
         function clickBeats() {
-            playClickSound(); // Triggers crisp click instantly on user tap
+            playClickSound();
+            // Multiplies the total current click power by 10 if Matrix mode is on
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
-            score += multiplier;
+            score += (beatsPerClick * multiplier);
             updateUI();
         }
 
@@ -230,9 +233,16 @@
                 score -= upgrade.cost;
                 upgrade.count++;
                 upgrade.cost = Math.floor(upgrade.cost * 1.15);
-                calculateBPS();
-                lastPlayedUrl = upgrade.url; 
-                playTrack(upgrade.url); 
+                
+                if (upgrade.type === "click") {
+                    calculateBPC();
+                } else {
+                    calculateBPS();
+                    if (upgrade.url) {
+                        lastPlayedUrl = upgrade.url; 
+                        playTrack(upgrade.url); 
+                    }
+                }
                 updateUI();
             }
         }
@@ -248,51 +258,31 @@
         }
 
         function calculateBPS() {
-            beatsPerSecond = upgrades.reduce((total, up) => total + (up.count * up.bps), 0);
+            beatsPerSecond = upgrades.reduce((total, up) => {
+                return up.type === "bps" ? total + (up.count * up.value) : total;
+            }, 0);
+        }
+
+        function calculateBPC() {
+            beatsPerClick = 1 + upgrades.reduce((total, up) => {
+                return up.type === "click" ? total + (up.count * up.value) : total;
+            }, 0);
         }
 
         function updateUI() {
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('bps').innerText = beatsPerSecond;
+            document.getElementById('bpc').innerText = beatsPerClick;
 
             upgrades.forEach(up => {
-                document.getElementById(`count-${up.id}`).innerText = up.count;
+                const countLabel = document.getElementById(`count-${up.id}`);
                 const btn = document.getElementById(`btn-${up.id}`);
-                btn.innerText = `Cost: ${up.cost}`;
-                btn.disabled = score < up.cost;
+                if (countLabel) countLabel.innerText = up.count;
+                if (btn) {
+                    btn.innerText = `Cost: ${up.cost}`;
+                    btn.disabled = score < up.cost;
+                }
             });
         }
 
         function checkCode() {
-            const input = document.getElementById('matrix-code').value;
-            if (input === '999') {
-                enterMatrixMode();
-            }
-        }
-
-        function enterMatrixMode() {
-            document.body.classList.add('matrix-mode');
-            document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
-            document.getElementById('click-trigger').innerText = "TAP THE CODE";
-            document.getElementById('secret-section').style.display = 'none';
-            document.getElementById('back-button').style.display = 'inline-block';
-            document.getElementById('matrix-code').value = '';
-        }
-
-        function exitMatrixMode() {
-            document.body.classList.remove('matrix-mode');
-            document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
-            document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
-            document.getElementById('secret-section').style.display = 'block';
-            document.getElementById('back-button').style.display = 'none';
-        }
-
-        setInterval(() => {
-            score += beatsPerSecond;
-            updateUI();
-        }, 1000);
-
-        initGame();
-    </script>
-</body>
-</html>
