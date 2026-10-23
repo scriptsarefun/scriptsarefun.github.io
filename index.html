@@ -80,6 +80,7 @@
             align-items: center;
             padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
         }
 
         .upgrade-item:last-child {
@@ -156,12 +157,11 @@
     <script>
         let score = 0;
         let beatsPerSecond = 0;
-        let beatsPerClick = 1; // Tracks manual clicking worth
+        let beatsPerClick = 1;
         let currentAudio = null;
         let lastPlayedUrl = "";
         let synthCtx = null;
 
-        // Upgrades array housing both passive BPS and manual click power elements
         const upgrades = [
             { id: 1, name: "Golden Finger Tapes", cost: 10, value: 1, type: "click", count: 0, url: "" },
             { id: 2, name: "Upbeat Synth Theme", cost: 15, value: 1, type: "bps", count: 0, url: "https://wikimedia.org" },
@@ -174,12 +174,12 @@
 
         function initGame() {
             const container = document.getElementById('upgrades-container');
-            container.innerHTML = '';
+            if (!container) return;
             
+            let htmlContent = "";
             upgrades.forEach(up => {
-                // Generates text descriptions dynamically depending on the upgrade type
                 let typeText = up.type === "click" ? `+${up.value} Per Click` : `+${up.value} BPS`;
-                container.innerHTML += `
+                htmlContent += `
                     <div class="upgrade-item" id="item-${up.id}">
                         <div>
                             <strong>${up.name}</strong><br>
@@ -191,6 +191,7 @@
                     </div>
                 `;
             });
+            container.innerHTML = htmlContent;
             updateUI();
         }
 
@@ -214,14 +215,11 @@
                 
                 osc.start();
                 osc.stop(synthCtx.currentTime + 0.04);
-            } catch (error) {
-                console.log("Audio contextual playback blocked by browser settings.");
-            }
+            } catch (error) {}
         }
 
         function clickBeats() {
             playClickSound();
-            // Multiplies the total current click power by 10 if Matrix mode is on
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
             score += (beatsPerClick * multiplier);
             updateUI();
@@ -229,6 +227,8 @@
 
         function buyUpgrade(id) {
             const upgrade = upgrades.find(up => up.id === id);
+            if (!upgrade) return;
+
             if (score >= upgrade.cost) {
                 score -= upgrade.cost;
                 upgrade.count++;
@@ -254,7 +254,7 @@
             currentAudio = new Audio(url);
             currentAudio.loop = true;
             currentAudio.volume = 1.0; 
-            currentAudio.play().catch(e => console.log("Interaction restriction caught."));
+            currentAudio.play().catch(e => console.log("Audio waiting for active interaction."));
         }
 
         function calculateBPS() {
@@ -281,8 +281,3 @@
                 if (btn) {
                     btn.innerText = `Cost: ${up.cost}`;
                     btn.disabled = score < up.cost;
-                }
-            });
-        }
-
-        function checkCode() {
