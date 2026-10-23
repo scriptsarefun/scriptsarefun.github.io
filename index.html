@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Synth Clicker</title>
+    <title>Ultimate Music Clicker</title>
     <style>
         :root {
             --bg-color: #1a1a2e;
@@ -36,21 +36,6 @@
             max-width: 600px;
             width: 100%;
             text-align: center;
-        }
-
-        .volume-panel {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 30px;
-            margin-bottom: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .volume-slider {
-            cursor: pointer;
-            accent-color: var(--accent-color);
         }
 
         .score-display {
@@ -149,19 +134,13 @@
     <div class="container">
         <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
         
-        <div class="volume-panel">
-            <span>🔊 Volume:</span>
-            <input type="range" id="volume-control" class="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="adjustVolume(this.value)">
-            <span id="volume-label">50%</span>
-        </div>
-
         <div class="score-display">Beats: <span id="score">0</span></div>
         <div style="margin-bottom: 10px;">Beats Per Second (BPS): <span id="bps">0</span></div>
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
 
         <div class="panel">
-            <h3>Buy & Activate Synth Generators</h3>
+            <h3>Buy & Unlock Background Tracks</h3>
             <div id="upgrades-container"></div>
         </div>
 
@@ -176,69 +155,19 @@
     <script>
         let score = 0;
         let beatsPerSecond = 0;
-        let globalVolume = 0.5;
+        let currentAudio = null;
+        let lastPlayedUrl = "";
+        
+        // Setup internal audio generator context
+        let synthCtx = null;
 
-        let audioCtx = null;
-        let mainGainNode = null;
-        let musicInterval = null;
-
-        // Fully declared note frequencies for the synth sequence loops
         const upgrades = [
-            { id: 1, name: "Sub-Bass Hum Generator", cost: 15, bps: 1, count: 0, notes: [110, 110, 130, 130] },
-            { id: 2, name: "Retro Chiptune Arpeggiator", cost: 100, bps: 5, count: 0, notes: [261, 329, 392, 523] },
-            { id: 3, name: "Industrial Techno Pulse", cost: 500, bps: 25, count: 0, notes: [146, 146, 220, 146] },
-            { id: 4, name: "Cyber Rave Oscillator", cost: 3000, bps: 100, count: 0, notes: [440, 494, 554, 659] },
-            { id: 5, name: "Hyperdrive Melody Core", cost: 10000, bps: 500, count: 0, notes: [587, 698, 880, 1046] }
+            { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
+            { id: 2, name: "Acoustic Funk Groove", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
+            { id: 3, name: "Club Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
+            { id: 4, name: "Fast Breakbeat Energy", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
+            { id: 5, name: "Cyber Arpeggio Overdrive", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
         ];
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                mainGainNode = audioCtx.createGain();
-                mainGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
-                mainGainNode.connect(audioCtx.destination);
-                startSequencer();
-            }
-        }
-
-        function startSequencer() {
-            let step = 0;
-            musicInterval = setInterval(() => {
-                let highestUnlocked = -1;
-                upgrades.forEach((up, idx) => {
-                    if (up.count > 0) highestUnlocked = idx;
-                });
-
-                if (document.body.classList.contains('matrix-mode')) {
-                    playSynthTone(587 * ((step % 4) + 1), 0.15, 'sawtooth');
-                } else if (highestUnlocked !== -1) {
-                    let track = upgrades[highestUnlocked];
-                    let currentNote = track.notes[step % track.notes.length];
-                    playSynthTone(currentNote, 0.25, 'triangle');
-                }
-                step++;
-            }, 250);
-        }
-
-        function playSynthTone(frequency, duration, type) {
-            if (!audioCtx) return;
-            try {
-                let osc = audioCtx.createOscillator();
-                let gainNode = audioCtx.createGain();
-                
-                osc.type = type;
-                osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-                
-                osc.connect(gainNode);
-                gainNode.connect(mainGainNode);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e){}
-        }
 
         function initGame() {
             const container = document.getElementById('upgrades-container');
@@ -260,33 +189,62 @@
             updateUI();
         }
 
+        // Native Synth Click Player (Bypasses URL blocks entirely)
+        function playClickSound() {
+            try {
+                if (!synthCtx) {
+                    synthCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                let osc = synthCtx.createOscillator();
+                let gain = synthCtx.createGain();
+                
+                osc.type = 'sine';
+                // Generates a clean high-pitched electronic snap sound
+                osc.frequency.setValueAtTime(600, synthCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, synthCtx.currentTime + 0.04);
+                
+                gain.gain.setValueAtTime(0.3, synthCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, synthCtx.currentTime + 0.04);
+                
+                osc.connect(gain);
+                gain.connect(synthCtx.destination);
+                
+                osc.start();
+                osc.stop(synthCtx.currentTime + 0.04);
+            } catch (error) {
+                console.log("Audio contextual playback blocked by browser settings.");
+            }
+        }
+
         function clickBeats() {
-            initAudio();
-            playSynthTone(440, 0.05, 'sine');
+            playClickSound(); // Triggers crisp click instantly on user tap
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
             score += multiplier;
             updateUI();
         }
 
         function buyUpgrade(id) {
-            initAudio();
             const upgrade = upgrades.find(up => up.id === id);
             if (score >= upgrade.cost) {
                 score -= upgrade.cost;
                 upgrade.count++;
                 upgrade.cost = Math.floor(upgrade.cost * 1.15);
                 calculateBPS();
-                playSynthTone(880, 0.15, 'sine');
+                lastPlayedUrl = upgrade.url; 
+                playTrack(upgrade.url); 
                 updateUI();
             }
         }
 
-        function adjustVolume(val) {
-            globalVolume = parseFloat(val);
-            document.getElementById('volume-label').innerText = Math.round(globalVolume * 100) + "%";
-            if (mainGainNode && audioCtx) {
-                mainGainNode.gain.setValueAtTime(globalVolume, audioCtx.currentTime);
+        function playTrack(url) {
+            if (currentAudio) {
+                currentAudio.pause();
             }
+            currentAudio = new Audio(url);
+            currentAudio.loop = true;
+            currentAudio.volume = 1.0; 
+            currentAudio.play().catch(e => console.log("Interaction restriction caught."));
         }
 
         function calculateBPS() {
@@ -298,3 +256,43 @@
             document.getElementById('bps').innerText = beatsPerSecond;
 
             upgrades.forEach(up => {
+                document.getElementById(`count-${up.id}`).innerText = up.count;
+                const btn = document.getElementById(`btn-${up.id}`);
+                btn.innerText = `Cost: ${up.cost}`;
+                btn.disabled = score < up.cost;
+            });
+        }
+
+        function checkCode() {
+            const input = document.getElementById('matrix-code').value;
+            if (input === '999') {
+                enterMatrixMode();
+            }
+        }
+
+        function enterMatrixMode() {
+            document.body.classList.add('matrix-mode');
+            document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
+            document.getElementById('click-trigger').innerText = "TAP THE CODE";
+            document.getElementById('secret-section').style.display = 'none';
+            document.getElementById('back-button').style.display = 'inline-block';
+            document.getElementById('matrix-code').value = '';
+        }
+
+        function exitMatrixMode() {
+            document.body.classList.remove('matrix-mode');
+            document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
+            document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
+            document.getElementById('secret-section').style.display = 'block';
+            document.getElementById('back-button').style.display = 'none';
+        }
+
+        setInterval(() => {
+            score += beatsPerSecond;
+            updateUI();
+        }, 1000);
+
+        initGame();
+    </script>
+</body>
+</html>
