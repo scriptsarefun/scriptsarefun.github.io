@@ -44,6 +44,14 @@
             font-weight: bold;
         }
 
+        .stats-display {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 1rem;
+        }
+
         .click-btn {
             background-color: var(--accent-color);
             color: white;
@@ -80,6 +88,7 @@
             align-items: center;
             padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
         }
 
         .upgrade-item:last-child {
@@ -93,6 +102,7 @@
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .matrix-mode .buy-btn {
@@ -105,6 +115,11 @@
             background-color: #444;
             color: #888;
             cursor: not-allowed;
+        }
+
+        .matrix-mode .buy-btn:disabled {
+            border: 1px solid #224422;
+            color: #224422;
         }
 
         .secret-input {
@@ -134,13 +149,17 @@
     <div class="container">
         <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
         
-        <div class="score-display">Beats: <span id="score">0</span></div>
-        <div style="margin-bottom: 10px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        <div class="score-display"><span id="score-label">Beats</span>: <span id="score">0</span></div>
+        
+        <div class="stats-display">
+            <div><span id="bps-label">BPS</span>: <span id="bps">0</span></div>
+            <div>Click Value: +<span id="click-val">1</span></div>
+        </div>
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
 
         <div class="panel">
-            <h3>Buy & Unlock Background Tracks</h3>
+            <h3 id="shop-title">Buy & Unlock Background Tracks</h3>
             <div id="upgrades-container"></div>
         </div>
 
@@ -155,32 +174,45 @@
     <script>
         let score = 0;
         let beatsPerSecond = 0;
-        let currentAudio = null;
-        let lastPlayedUrl = "";
-        
-        // Setup internal audio generator context
+        let baseClickValue = 1;
         let synthCtx = null;
 
-        const upgrades = [
-            { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
-            { id: 2, name: "Acoustic Funk Groove", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
-            { id: 3, name: "Club Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
-            { id: 4, name: "Fast Breakbeat Energy", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
-            { id: 5, name: "Cyber Arpeggio Overdrive", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
+        // NORMAL MODE SHOP UPGRADES
+        const normalUpgrades = [
+            { id: "click1", name: "Heavy Duty Drumstick", cost: 10, amount: 1, type: "click", count: 0, desc: "+1 Per Click" },
+            { id: "click2", name: "Amplified Subwoofer", cost: 150, amount: 10, type: "click", count: 0, desc: "+10 Per Click" },
+            { id: "bps1", name: "Lo-Fi Background Hum", cost: 25, amount: 1, type: "bps", count: 0, desc: "+1 BPS" },
+            { id: "bps2", name: "Synthwave Bassline", cost: 250, amount: 8, type: "bps", count: 0, desc: "+8 BPS" },
+            { id: "bps3", name: "Orchestral Drop Combo", cost: 2000, amount: 50, type: "bps", count: 0, desc: "+50 BPS" }
         ];
+
+        // MATRIX MODE SHOP UPGRADES (Changes completely when 999 is entered)
+        const matrixUpgrades = [
+            { id: "mclick1", name: "Brute-Force Exploit", cost: 50, amount: 25, type: "click", count: 0, desc: "+25 Per Click" },
+            { id: "mclick2", name: "Quantum Rig Overclock", cost: 500, amount: 200, type: "click", count: 0, desc: "+200 Per Click" },
+            { id: "mbps1", name: "Distributed Botnet Worm", cost: 100, amount: 20, type: "bps", count: 0, desc: "+20 BPS" },
+            { id: "mbps2", name: "Mainframe Proxy Breach", cost: 1000, amount: 150, type: "bps", count: 0, desc: "+150 BPS" },
+            { id: "mbps3", name: "AI Core Singularity Override", cost: 15000, amount: 1200, type: "bps", count: 0, desc: "+1200 BPS" }
+        ];
+
+        function getActiveUpgrades() {
+            return document.body.classList.contains('matrix-mode') ? matrixUpgrades : normalUpgrades;
+        }
 
         function initGame() {
             const container = document.getElementById('upgrades-container');
             container.innerHTML = '';
             
-            upgrades.forEach(up => {
+            const currentList = getActiveUpgrades();
+            
+            currentList.forEach(up => {
                 container.innerHTML += `
                     <div class="upgrade-item" id="item-${up.id}">
                         <div>
                             <strong>${up.name}</strong><br>
-                            <small>Gives +${up.bps} BPS | Owned: <span id="count-${up.id}">0</span></small>
+                            <small>${up.desc} | Owned: <span id="count-${up.id}">${up.count}</span></small>
                         </div>
-                        <button class="buy-btn" id="btn-${up.id}" onclick="buyUpgrade(${up.id})">
+                        <button class="buy-btn" id="btn-${up.id}" onclick="buyUpgrade('${up.id}')">
                             Cost: ${up.cost}
                         </button>
                     </div>
@@ -189,110 +221,70 @@
             updateUI();
         }
 
-        // Native Synth Click Player (Bypasses URL blocks entirely)
-        function playClickSound() {
+        function playClickSound(freq, duration) {
             try {
                 if (!synthCtx) {
                     synthCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
                 let osc = synthCtx.createOscillator();
                 let gain = synthCtx.createGain();
                 
-                osc.type = 'sine';
-                // Generates a clean high-pitched electronic snap sound
-                osc.frequency.setValueAtTime(600, synthCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, synthCtx.currentTime + 0.04);
+                osc.type = document.body.classList.contains('matrix-mode') ? 'sawtooth' : 'sine';
+                osc.frequency.setValueAtTime(freq, synthCtx.currentTime);
+                if(document.body.classList.contains('matrix-mode')) {
+                    osc.frequency.exponentialRampToValueAtTime(freq / 2, synthCtx.currentTime + duration);
+                }
                 
-                gain.gain.setValueAtTime(0.3, synthCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, synthCtx.currentTime + 0.04);
+                gain.gain.setValueAtTime(0.2, synthCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, synthCtx.currentTime + duration);
                 
                 osc.connect(gain);
                 gain.connect(synthCtx.destination);
                 
                 osc.start();
-                osc.stop(synthCtx.currentTime + 0.04);
-            } catch (error) {
-                console.log("Audio contextual playback blocked by browser settings.");
-            }
+                osc.stop(synthCtx.currentTime + duration);
+            } catch (e) {}
         }
 
         function clickBeats() {
-            playClickSound(); // Triggers crisp click instantly on user tap
-            const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
-            score += multiplier;
+            playClickSound(document.body.classList.contains('matrix-mode') ? 220 : 600, 0.05);
+            
+            // Calculate current total clicking worth
+            let clickPower = baseClickValue;
+            const currentList = getActiveUpgrades();
+            
+            currentList.forEach(up => {
+                if(up.type === "click") {
+                    clickPower += (up.count * up.amount);
+                }
+            });
+
+            score += clickPower;
             updateUI();
         }
 
         function buyUpgrade(id) {
-            const upgrade = upgrades.find(up => up.id === id);
+            const currentList = getActiveUpgrades();
+            const upgrade = currentList.find(up => up.id === id);
+            
             if (score >= upgrade.cost) {
                 score -= upgrade.cost;
                 upgrade.count++;
-                upgrade.cost = Math.floor(upgrade.cost * 1.15);
-                calculateBPS();
-                lastPlayedUrl = upgrade.url; 
-                playTrack(upgrade.url); 
+                upgrade.cost = Math.floor(upgrade.cost * 1.20); // Scale cost by 20%
+                
+                playClickSound(880, 0.12);
+                calculateStats();
                 updateUI();
             }
         }
 
-        function playTrack(url) {
-            if (currentAudio) {
-                currentAudio.pause();
-            }
-            currentAudio = new Audio(url);
-            currentAudio.loop = true;
-            currentAudio.volume = 1.0; 
-            currentAudio.play().catch(e => console.log("Interaction restriction caught."));
-        }
+        function calculateStats() {
+            let currentList = getActiveUpgrades();
+            
+            // Calculate Background BPS
+            beatsPerSecond = currentList.reduce((total, up) => {
+                return up.type === "bps" ? total + (up.count * up.amount) : total;
+            }, 0);
 
-        function calculateBPS() {
-            beatsPerSecond = upgrades.reduce((total, up) => total + (up.count * up.bps), 0);
-        }
-
-        function updateUI() {
-            document.getElementById('score').innerText = Math.floor(score);
-            document.getElementById('bps').innerText = beatsPerSecond;
-
-            upgrades.forEach(up => {
-                document.getElementById(`count-${up.id}`).innerText = up.count;
-                const btn = document.getElementById(`btn-${up.id}`);
-                btn.innerText = `Cost: ${up.cost}`;
-                btn.disabled = score < up.cost;
-            });
-        }
-
-        function checkCode() {
-            const input = document.getElementById('matrix-code').value;
-            if (input === '999') {
-                enterMatrixMode();
-            }
-        }
-
-        function enterMatrixMode() {
-            document.body.classList.add('matrix-mode');
-            document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
-            document.getElementById('click-trigger').innerText = "TAP THE CODE";
-            document.getElementById('secret-section').style.display = 'none';
-            document.getElementById('back-button').style.display = 'inline-block';
-            document.getElementById('matrix-code').value = '';
-        }
-
-        function exitMatrixMode() {
-            document.body.classList.remove('matrix-mode');
-            document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
-            document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
-            document.getElementById('secret-section').style.display = 'block';
-            document.getElementById('back-button').style.display = 'none';
-        }
-
-        setInterval(() => {
-            score += beatsPerSecond;
-            updateUI();
-        }, 1000);
-
-        initGame();
-    </script>
-</body>
-</html>
+            // Display current click engine strength
+            let clickPower = baseClickValue;
