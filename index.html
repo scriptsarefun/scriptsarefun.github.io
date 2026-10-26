@@ -20,14 +20,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.5s ease;
-        }
-        body.matrix-mode {
-            --bg-color: #000000;
-            --text-color: #00ff00;
-            --accent-color: #008f11;
-            --panel-bg: #0d1f0d;
-            font-family: 'Courier New', Courier, monospace;
         }
         .container {
             max-width: 600px;
@@ -47,13 +39,8 @@
             font-size: 1.5rem;
             border-radius: 50px;
             cursor: pointer;
+            font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
-        }
-        .matrix-mode .click-btn {
-            color: #00ff00;
-            border: 2px solid #00ff00;
-            background: transparent;
         }
         .click-btn:active {
             transform: scale(0.95);
@@ -63,7 +50,6 @@
             border-radius: 15px;
             padding: 20px;
             margin-top: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .upgrade-item {
             display: flex;
@@ -83,205 +69,183 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .matrix-mode .buy-btn {
-            border: 1px solid #00ff00;
-            background: transparent;
-            color: #00ff00;
-        }
         .buy-btn:disabled {
             background-color: #444;
             color: #888;
             cursor: not-allowed;
         }
-        .secret-input {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background: #222;
-            color: #fff;
-            text-align: center;
-        }
-        .back-btn {
-            display: none;
-            margin-top: 20px;
-            background-color: #555;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
+        <h1>🎵 Beat Clicker 🎵</h1>
+
         <div class="score-display">Beats: <span id="score">0</span></div>
         <div style="margin-bottom: 10px;">Beats Per Click (BPC): <span id="bpc-display">1</span></div>
         <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
         
-        <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
+        <button class="click-btn" onclick="clickBeats()">DROP THE BEAT!</button>
         
+        <!-- CLICKING UPGRADES -->
         <div class="panel">
             <h3>Buy & Unlock Clicking Upgrades</h3>
-            <div id="click-upgrades-container">
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Heavy Drumsticks</strong><br>
-                        <small>Gives +1 BPC | Owned: <span id="count-c1">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-c1" onclick="buyClickUpgrade('c1', 1)">Cost: 10</button>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Heavy Drumsticks</strong><br>
+                    <small>Gives +1 BPC | Owned: <span id="count-c1">0</span></small>
                 </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Amplified Mouse</strong><br>
-                        <small>Gives +5 BPC | Owned: <span id="count-c2">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-c2" onclick="buyClickUpgrade('c2', 5)">Cost: 80</button>
+                <button class="buy-btn" id="btn-c1" onclick="buyHeavyDrumsticks()">Cost: 10</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Amplified Mouse</strong><br>
+                    <small>Gives +5 BPC | Owned: <span id="count-c2">0</span></small>
                 </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Macro Beat Generator</strong><br>
-                        <small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-c3" onclick="buyClickUpgrade('c3', 20)">Cost: 400</button>
+                <button class="buy-btn" id="btn-c2" onclick="buyAmplifiedMouse()">Cost: 80</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Macro Beat Generator</strong><br>
+                    <small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small>
                 </div>
+                <button class="buy-btn" id="btn-c3" onclick="buyMacroGenerator()">Cost: 400</button>
             </div>
         </div>
 
+        <!-- BACKGROUND TRACKS -->
         <div class="panel">
             <h3>Buy & Unlock Background Tracks</h3>
-            <div id="upgrades-container">
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Upbeat Synth Theme</strong><br>
-                        <small>Gives +1 BPS | Owned: <span id="count-p1">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-p1" onclick="buyPassiveUpgrade('p1', 1)">Cost: 15</button>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Upbeat Synth Theme</strong><br>
+                    <small>Gives +1 BPS | Owned: <span id="count-p1">0</span></small>
                 </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Acoustic Funk Groove</strong><br>
-                        <small>Gives +5 BPS | Owned: <span id="count-p2">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-p2" onclick="buyPassiveUpgrade('p2', 5)">Cost: 100</button>
+                <button class="buy-btn" id="btn-p1" onclick="buySynthTheme()">Cost: 15</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Acoustic Funk Groove</strong><br>
+                    <small>Gives +5 BPS | Owned: <span id="count-p2">0</span></small>
                 </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Club Techno Pulse</strong><br>
-                        <small>Gives +25 BPS | Owned: <span id="count-p3">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-p3" onclick="buyPassiveUpgrade('p3', 25)">Cost: 500</button>
-                </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Fast Breakbeat Energy</strong><br>
-                        <small>Gives +100 BPS | Owned: <span id="count-p4">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-p4" onclick="buyPassiveUpgrade('p4', 100)">Cost: 3000</button>
-                </div>
-                <div class="upgrade-item">
-                    <div>
-                        <strong>Cyber Arpeggio Overdrive</strong><br>
-                        <small>Gives +500 BPS | Owned: <span id="count-p5">0</span></small>
-                    </div>
-                    <button class="buy-btn" id="btn-p5" onclick="buyPassiveUpgrade('p5', 500)">Cost: 10000</button>
-                </div>
+                <button class="buy-btn" id="btn-p2" onclick="buyFunkGroove()">Cost: 100</button>
             </div>
         </div>
-        
-        <div id="secret-section">
-            <p>Enter Secret Code:</p>
-            <input type="password" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
-        </div>
-        <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
     </div>
 
     <script>
+        // Core game tracking variables
         var score = 0;
-        var beatsPerSecond = 0;
         var beatsPerClick = 1;
+        var beatsPerSecond = 0;
 
-        var upgradeCounts = { c1:0, c2:0, c3:0, p1:0, p2:0, p3:0, p4:0, p5:0 };
-        var upgradeCosts = { c1:10, c2:80, c3:400, p1:15, p2:100, p3:500, p4:3000, p5:10000 };
-        var idList = ['c1', 'c2', 'c3', 'p1', 'p2', 'p3', 'p4', 'p5'];
+        // Upgrade tracking variables
+        var countC1 = 0; var costC1 = 10;
+        var countC2 = 0; var costC2 = 80;
+        var countC3 = 0; var costC3 = 400;
+        var countP1 = 0; var costP1 = 15;
+        var countP2 = 0; var costP2 = 100;
 
+        // Core click execution
         function clickBeats() {
-            var multiplier = 1;
-            if (document.body.classList.contains('matrix-mode')) {
-                multiplier = 10;
-            }
-            score = score + (beatsPerClick * multiplier);
+            score = score + beatsPerClick;
             updateUI();
         }
 
-        function buyClickUpgrade(id, value) {
-            var currentCost = upgradeCosts[id];
-            if (score >= currentCost) {
-                score = score - currentCost;
-                upgradeCounts[id] = upgradeCounts[id] + 1;
-                beatsPerClick = beatsPerClick + value;
-                upgradeCosts[id] = Math.floor(currentCost * 1.15);
+        // Clicking Upgrade 1
+        function buyHeavyDrumsticks() {
+            if (score >= costC1) {
+                score = score - costC1;
+                countC1 = countC1 + 1;
+                beatsPerClick = beatsPerClick + 1;
+                costC1 = Math.floor(costC1 * 1.15);
                 updateUI();
             }
         }
 
-        function buyPassiveUpgrade(id, value) {
-            var currentCost = upgradeCosts[id];
-            if (score >= currentCost) {
-                score = score - currentCost;
-                upgradeCounts[id] = upgradeCounts[id] + 1;
-                beatsPerSecond = beatsPerSecond + value;
-                upgradeCosts[id] = Math.floor(currentCost * 1.15);
+        // Clicking Upgrade 2
+        function buyAmplifiedMouse() {
+            if (score >= costC2) {
+                score = score - costC2;
+                countC2 = countC2 + 1;
+                beatsPerClick = beatsPerClick + 5;
+                costC2 = Math.floor(costC2 * 1.15);
                 updateUI();
             }
         }
 
+        // Clicking Upgrade 3
+        function buyMacroGenerator() {
+            if (score >= costC3) {
+                score = score - costC3;
+                countC3 = countC3 + 1;
+                beatsPerClick = beatsPerClick + 20;
+                costC3 = Math.floor(costC3 * 1.15);
+                updateUI();
+            }
+        }
+
+        // Passive Track 1
+        function buySynthTheme() {
+            if (score >= costP1) {
+                score = score - costP1;
+                countP1 = countP1 + 1;
+                beatsPerSecond = beatsPerSecond + 1;
+                costP1 = Math.floor(costP1 * 1.15);
+                updateUI();
+            }
+        }
+
+        // Passive Track 2
+        function buyFunkGroove() {
+            if (score >= costP2) {
+                score = score - costP2;
+                countP2 = countP2 + 1;
+                beatsPerSecond = beatsPerSecond + 5;
+                costP2 = Math.floor(costP2 * 1.15);
+                updateUI();
+            }
+        }
+
+        // Standard direct UI updates (Zero loops to avoid script crashes)
         function updateUI() {
-            document.getElementById('score').innerText = Math.floor(score);
+            document.getElementById('score').innerText = score;
+            document.getElementById('bpc-display').innerText = beatsPerClick;
             document.getElementById('bps-display').innerText = beatsPerSecond;
-            
-            var multiplier = 1;
-            if (document.body.classList.contains('matrix-mode')) {
-                multiplier = 10;
-            }
-            document.getElementById('bpc-display').innerText = beatsPerClick * multiplier;
-            
-            for (var i = 0; i < idList.length; i++) {
-                var id = idList[i];
-                document.getElementById('count-' + id).innerText = upgradeCounts[id];
-                var btn = document.getElementById('btn-' + id);
-                btn.innerText = 'Cost: ' + upgradeCosts[id];
-                btn.disabled = (score < upgradeCosts[id]);
-            }
+
+            // Update Item 1
+            document.getElementById('count-c1').innerText = countC1;
+            document.getElementById('btn-c1').innerText = 'Cost: ' + costC1;
+            document.getElementById('btn-c1').disabled = (score < costC1);
+
+            // Update Item 2
+            document.getElementById('count-c2').innerText = countC2;
+            document.getElementById('btn-c2').innerText = 'Cost: ' + costC2;
+            document.getElementById('btn-c2').disabled = (score < costC2);
+
+            // Update Item 3
+            document.getElementById('count-c3').innerText = countC3;
+            document.getElementById('btn-c3').innerText = 'Cost: ' + costC3;
+            document.getElementById('btn-c3').disabled = (score < costC3);
+
+            // Update Track 1
+            document.getElementById('count-p1').innerText = countP1;
+            document.getElementById('btn-p1').innerText = 'Cost: ' + costP1;
+            document.getElementById('btn-p1').disabled = (score < costP1);
+
+            // Update Track 2
+            document.getElementById('count-p2').innerText = countP2;
+            document.getElementById('btn-p2').innerText = 'Cost: ' + costP2;
+            document.getElementById('btn-p2').disabled = (score < costP2);
         }
 
-        function checkCode() {
-            var input = document.getElementById('matrix-code').value;
-            if (input === '999') {
-enterMatrixMode();
-}
-}
-function enterMatrixMode() {
-document.body.classList.add('matrix-mode');
-document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
-document.getElementById('click-trigger').innerText = "TAP THE CODE";
-document.getElementById('secret-section').style.display = 'none';
-document.getElementById('back-button').style.display = 'inline-block';
-document.getElementById('matrix-code').value = '';
-updateUI();
-}
-function exitMatrixMode() {
-document.body.classList.remove('matrix-mode');
-document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
-document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
-document.getElementById('secret-section').style.display = 'block';
-document.getElementById('back-button').style.display = 'none';
-updateUI();
-}
-setInterval(function() {
-score = score + beatsPerSecond;
-updateUI();
-}, 1000);
-updateUI();
+        // Time ticker loop
+        setInterval(function() {
+            score = score + beatsPerSecond;
+            updateUI();
+        }, 1000);
+
+        // Run baseline setup immediately
+        updateUI();
+    </script>
+</body>
+</html>
