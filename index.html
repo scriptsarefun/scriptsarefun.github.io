@@ -121,7 +121,6 @@
         <div style="margin-bottom: 10px;">Beats Per Click (BPC): <span id="bpc-display">1</span></div>
         <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
         
-        <!-- Totally independent trigger function -->
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
         
         <div class="panel">
@@ -203,7 +202,6 @@
         var score = 0;
         var beatsPerSecond = 0;
         var beatsPerClick = 1;
-        var synthCtx = null;
 
         var upgradeCounts = { c1:0, c2:0, c3:0, p1:0, p2:0, p3:0, p4:0, p5:0 };
         var upgradeCosts = { c1:10, c2:80, c3:400, p1:15, p2:100, p3:500, p4:3000, p5:10000 };
@@ -250,7 +248,6 @@
             }
             document.getElementById('bpc-display').innerText = beatsPerClick * multiplier;
             
-            // Standard string combinations to ensure maximum system compatibility
             for (var i = 0; i < idList.length; i++) {
                 var id = idList[i];
                 document.getElementById('count-' + id).innerText = upgradeCounts[id];
@@ -258,9 +255,11 @@
                 btn.innerText = 'Cost: ' + upgradeCosts[id];
                 btn.disabled = (score < upgradeCosts[id]);
             }
-function checkCode() {
-var input = document.getElementById('matrix-code').value;
-if (input === '999') {
+        }
+
+        function checkCode() {
+            var input = document.getElementById('matrix-code').value;
+            if (input === '999') {
 enterMatrixMode();
 }
 }
