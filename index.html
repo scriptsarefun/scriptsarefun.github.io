@@ -29,6 +29,14 @@
             --panel-bg: #0d1f0d;
             font-family: 'Courier New', Courier, monospace;
         }
+        body.hyperdrive-mode {
+            --bg-color: #12041c;
+            --text-color: #00ffff;
+            --accent-color: #ff007f;
+            --panel-bg: #240936;
+            font-family: 'Segoe UI', sans-serif;
+            box-shadow: inset 0 0 100px rgba(255, 0, 127, 0.2);
+        }
         .container {
             max-width: 600px;
             width: 100%;
@@ -38,6 +46,9 @@
             font-size: 2.5rem;
             margin: 20px 0;
             font-weight: bold;
+        }
+        .hyperdrive-mode .score-display {
+            text-shadow: 0 0 10px #00ffff;
         }
         .click-btn {
             background-color: var(--accent-color);
@@ -56,6 +67,12 @@
             border: 2px solid #00ff00;
             background: transparent;
         }
+        .hyperdrive-mode .click-btn {
+            color: #ffffff;
+            background: #ff007f;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px #ff007f;
+        }
         .click-btn:active {
             transform: scale(0.95);
         }
@@ -64,6 +81,9 @@
             border-radius: 15px;
             padding: 20px;
             margin-top: 30px;
+        }
+        .hyperdrive-mode .panel {
+            border: 1px solid rgba(0, 255, 255, 0.2);
         }
         .upgrade-item {
             display: flex;
@@ -88,10 +108,20 @@
             background: transparent;
             color: #00ff00;
         }
+        .hyperdrive-mode .buy-btn {
+            background: #00ffff;
+            color: #12041c;
+            font-weight: bold;
+        }
         .buy-btn:disabled {
             background-color: #444;
             color: #888;
             cursor: not-allowed;
+        }
+        .hyperdrive-mode .buy-btn:disabled {
+            background-color: #242424;
+            color: #555;
+            border: none;
         }
         .secret-input {
             margin-top: 20px;
@@ -102,6 +132,11 @@
             color: #fff;
             text-align: center;
         }
+        .hyperdrive-mode .secret-input {
+            border-color: #ff007f;
+            background: #1a0529;
+            color: #00ffff;
+        }
         .back-btn {
             display: none;
             margin-top: 20px;
@@ -111,6 +146,11 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .hyperdrive-mode .back-btn {
+            background-color: #ff007f;
+            color: white;
+            box-shadow: 0 0 10px #ff007f;
         }
     </style>
 </head>
@@ -146,6 +186,20 @@
                     <small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small>
                 </div>
                 <button class="buy-btn" id="btn-c3" onclick="buyMacroGenerator()">Cost: 400</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Quantum Tap Engine</strong><br>
+                    <small>Gives +100 BPC | Owned: <span id="count-c4">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-c4" onclick="buyQuantumEngine()">Cost: 2500</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Singularity Clicker</strong><br>
+                    <small>Gives +500 BPC | Owned: <span id="count-c5">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-c5" onclick="buySingularityClicker()">Cost: 15000</button>
             </div>
         </div>
 
@@ -187,15 +241,49 @@
                 </div>
                 <button class="buy-btn" id="btn-p5" onclick="buyCyberOverdrive()">Cost: 10000</button>
             </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Hypersonic Remix</strong><br>
+                    <small>Gives +2500 BPS | Owned: <span id="count-p6">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p6" onclick="buyHypersonicRemix()">Cost: 60000</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Galactic Symphony</strong><br>
+                    <small>Gives +10000 BPS | Owned: <span id="count-p7">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p7" onclick="buyGalacticSymphony()">Cost: 350000</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Time-Warp Continuum</strong><br>
+                    <small>Gives +50000 BPS | Owned: <span id="count-p8">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p8" onclick="buyTimeWarp()">Cost: 2000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Multiverse Bassline</strong><br>
+                    <small>Gives +250000 BPS | Owned: <span id="count-p9">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p9" onclick="buyMultiverseBassline()">Cost: 15000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Omniverse Masterpiece</strong><br>
+                    <small>Gives +1000000 BPS | Owned: <span id="count-p10">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p10" onclick="buyOmniverseMasterpiece()">Cost: 100000000</button>
+            </div>
         </div>
 
-        <!-- SECRET CODES -->
         <div id="secret-section">
             <p>Enter Secret Code:</p>
             <input type="text" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
         </div>
 
-        <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
+        <button id="back-button" class="back-btn" onclick="exitSpecialModes()">⬅ Go Back to Reality</button>
     </div>
 
     <script>
@@ -206,19 +294,30 @@
         var countC1 = 0; var costC1 = 10;
         var countC2 = 0; var costC2 = 80;
         var countC3 = 0; var costC3 = 400;
+        var countC4 = 0; var costC4 = 2500;
+        var countC5 = 0; var costC5 = 15000;
 
         var countP1 = 0; var costP1 = 15;
         var countP2 = 0; var costP2 = 100;
         var countP3 = 0; var costP3 = 500;
         var countP4 = 0; var costP4 = 3000;
         var countP5 = 0; var costP5 = 10000;
+        var countP6 = 0; var costP6 = 60000;
+        var countP7 = 0; var costP7 = 350000;
+        var countP8 = 0; var costP8 = 2000000;
+        var countP9 = 0; var costP9 = 15000000;
+        var countP10 = 0; var costP10 = 100000000;
 
         function clickBeats() {
-            var multiplier = 1;
+            var currentBPC = beatsPerClick;
+            
             if (document.body.classList.contains('matrix-mode')) {
-                multiplier = 10;
+                currentBPC = beatsPerClick * 10;
+            } else if (document.body.classList.contains('hyperdrive-mode')) {
+                currentBPC = 50000;
             }
-            score = score + (beatsPerClick * multiplier);
+            
+            score = score + currentBPC;
             updateUI();
         }
 
@@ -248,6 +347,26 @@
                 countC3 = countC3 + 1;
                 beatsPerClick = beatsPerClick + 20;
                 costC3 = Math.floor(costC3 * 1.15);
+                updateUI();
+            }
+        }
+
+        function buyQuantumEngine() {
+            if (score >= costC4) {
+                score = score - costC4;
+                countC4 = countC4 + 1;
+                beatsPerClick = beatsPerClick + 100;
+                costC4 = Math.floor(costC4 * 1.15);
+                updateUI();
+            }
+        }
+
+        function buySingularityClicker() {
+            if (score >= costC5) {
+                score = score - costC5;
+                countC5 = countC5 + 1;
+                beatsPerClick = beatsPerClick + 500;
+                costC5 = Math.floor(costC5 * 1.15);
                 updateUI();
             }
         }
@@ -302,14 +421,68 @@
             }
         }
 
+        function buyHypersonicRemix() {
+            if (score >= costP6) {
+                score = score - costP6;
+                countP6 = countP6 + 1;
+                beatsPerSecond = beatsPerSecond + 2500;
+                costP6 = Math.floor(costP6 * 1.15);
+                updateUI();
+            }
+        }
+
+        function buyGalacticSymphony() {
+            if (score >= costP7) {
+                score = score - costP7;
+                countP7 = countP7 + 1;
+                beatsPerSecond = beatsPerSecond + 10000;
+                costP7 = Math.floor(costP7 * 1.15);
+                updateUI();
+            }
+        }
+
+        function buyTimeWarp() {
+            if (score >= costP8) {
+                score = score - costP8;
+                countP8 = countP8 + 1;
+                beatsPerSecond = beatsPerSecond + 50000;
+                costP8 = Math.floor(costP8 * 1.15);
+                updateUI();
+            }
+        }
+
+        function buyMultiverseBassline() {
+            if (score >= costP9) {
+                score = score - costP9;
+                countP9 = countP9 + 1;
+                beatsPerSecond = beatsPerSecond + 250000;
+                costP9 = Math.floor(costP9 * 1.15);
+                updateUI();
+            }
+        }
+
+        // Added Track 10
+        function buyOmniverseMasterpiece() {
+            if (score >= costP10) {
+                score = score - costP10;
+                countP10 = countP10 + 1;
+                beatsPerSecond = beatsPerSecond + 1000000;
+                costP10 = Math.floor(costP10 * 1.15);
+                updateUI();
+            }
+        }
+
         function checkCode() {
             var input = document.getElementById('matrix-code').value.trim();
             if (input === '999') {
                 enterMatrixMode();
+            } else if (input === '999555') {
+                enterHyperdriveMode();
             }
         }
 
         function enterMatrixMode() {
+            document.body.classList.remove('hyperdrive-mode');
             document.body.classList.add('matrix-mode');
             document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
             document.getElementById('click-trigger').innerText = "TAP THE CODE";
@@ -319,8 +492,20 @@
             updateUI();
         }
 
-        function exitMatrixMode() {
+        function enterHyperdriveMode() {
             document.body.classList.remove('matrix-mode');
+            document.body.classList.add('hyperdrive-mode');
+            document.getElementById('game-title').innerText = "🚀 HYPERDRIVE OVERLOAD 🚀";
+            document.getElementById('click-trigger').innerText = "⚡ INFINITE POWER ⚡";
+            document.getElementById('secret-section').style.display = 'none';
+            document.getElementById('back-button').style.display = 'inline-block';
+            document.getElementById('matrix-code').value = '';
+            updateUI();
+        }
+
+        function exitSpecialModes() {
+            document.body.classList.remove('matrix-mode');
+            document.body.classList.remove('hyperdrive-mode');
             document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
             document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
             document.getElementById('secret-section').style.display = 'block';
@@ -332,43 +517,29 @@
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('bps-display').innerText = beatsPerSecond;
             
-            var multiplier = 1;
+            var displayBPC = beatsPerClick;
             if (document.body.classList.contains('matrix-mode')) {
-                multiplier = 10;
+                displayBPC = beatsPerClick * 10;
+            } else if (document.body.classList.contains('hyperdrive-mode')) {
+                displayBPC = 50000;
             }
-            document.getElementById('bpc-display').innerText = beatsPerClick * multiplier;
+            document.getElementById('bpc-display').innerText = displayBPC;
 
-            document.getElementById('count-c1').innerText = countC1;
-            document.getElementById('btn-c1').innerText = 'Cost: ' + costC1;
-            document.getElementById('btn-c1').disabled = (score < costC1);
+            for (let i = 1; i <= 5; i++) {
+                let count = window['countC' + i];
+                let cost = window['costC' + i];
+                document.getElementById('count-c' + i).innerText = count;
+                document.getElementById('btn-c' + i).innerText = 'Cost: ' + cost;
+                document.getElementById('btn-c' + i).disabled = (score < cost);
+            }
 
-            document.getElementById('count-c2').innerText = countC2;
-            document.getElementById('btn-c2').innerText = 'Cost: ' + costC2;
-            document.getElementById('btn-c2').disabled = (score < costC2);
-
-            document.getElementById('count-c3').innerText = countC3;
-            document.getElementById('btn-c3').innerText = 'Cost: ' + costC3;
-            document.getElementById('btn-c3').disabled = (score < costC3);
-
-            document.getElementById('count-p1').innerText = countP1;
-            document.getElementById('btn-p1').innerText = 'Cost: ' + costP1;
-            document.getElementById('btn-p1').disabled = (score < costP1);
-
-            document.getElementById('count-p2').innerText = countP2;
-            document.getElementById('btn-p2').innerText = 'Cost: ' + costP2;
-            document.getElementById('btn-p2').disabled = (score < costP2);
-
-            document.getElementById('count-p3').innerText = countP3;
-            document.getElementById('btn-p3').innerText = 'Cost: ' + costP3;
-            document.getElementById('btn-p3').disabled = (score < costP3);
-
-            document.getElementById('count-p4').innerText = countP4;
-            document.getElementById('btn-p4').innerText = 'Cost: ' + costP4;
-            document.getElementById('btn-p4').disabled = (score < costP4);
-
-            document.getElementById('count-p5').innerText = countP5;
-            document.getElementById('btn-p5').innerText = 'Cost: ' + costP5;
-            document.getElementById('btn-p5').disabled = (score < costP5);
+            for (let i = 1; i <= 10; i++) {
+                let count = window['countP' + i];
+                let cost = window['costP' + i];
+                document.getElementById('count-p' + i).innerText = count;
+                document.getElementById('btn-p' + i).innerText = 'Cost: ' + cost;
+                document.getElementById('btn-p' + i).disabled = (score < cost);
+            }
         }
 
         setInterval(function() {
