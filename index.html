@@ -20,6 +20,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: all 0.5s ease;
+        }
+        body.matrix-mode {
+            --bg-color: #000000;
+            --text-color: #00ff00;
+            --accent-color: #008f11;
+            --panel-bg: #0d1f0d;
+            font-family: 'Courier New', Courier, monospace;
         }
         .container {
             max-width: 600px;
@@ -41,6 +49,12 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+        .matrix-mode .click-btn {
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            background: transparent;
         }
         .click-btn:active {
             transform: scale(0.95);
@@ -69,22 +83,46 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .matrix-mode .buy-btn {
+            border: 1px solid #00ff00;
+            background: transparent;
+            color: #00ff00;
+        }
         .buy-btn:disabled {
             background-color: #444;
             color: #888;
             cursor: not-allowed;
         }
+        .secret-input {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            text-align: center;
+        }
+        .back-btn {
+            display: none;
+            margin-top: 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 Beat Clicker 🎵</h1>
+        <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
 
         <div class="score-display">Beats: <span id="score">0</span></div>
         <div style="margin-bottom: 10px;">Beats Per Click (BPC): <span id="bpc-display">1</span></div>
         <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
         
-        <button class="click-btn" onclick="clickBeats()">DROP THE BEAT!</button>
+        <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
         
         <!-- CLICKING UPGRADES -->
         <div class="panel">
@@ -129,7 +167,35 @@
                 </div>
                 <button class="buy-btn" id="btn-p2" onclick="buyFunkGroove()">Cost: 100</button>
             </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Club Techno Pulse</strong><br>
+                    <small>Gives +25 BPS | Owned: <span id="count-p3">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p3" onclick="buyTechnoPulse()">Cost: 500</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Fast Breakbeat Energy</strong><br>
+                    <small>Gives +100 BPS | Owned: <span id="count-p4">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p4" onclick="buyBreakbeatEnergy()">Cost: 3000</button>
+            </div>
+            <div class="upgrade-item">
+                <div>
+                    <strong>Cyber Arpeggio Overdrive</strong><br>
+                    <small>Gives +500 BPS | Owned: <span id="count-p5">0</span></small>
+                </div>
+                <button class="buy-btn" id="btn-p5" onclick="buyCyberOverdrive()">Cost: 10000</button>
+            </div>
         </div>
+
+        <!-- SECRET CODES -->
+        <div id="secret-section">
+            <p>Enter Secret Code:</p>
+            <input type="password" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
+        </div>
+        <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
     </div>
 
     <script>
@@ -142,12 +208,20 @@
         var countC1 = 0; var costC1 = 10;
         var countC2 = 0; var costC2 = 80;
         var countC3 = 0; var costC3 = 400;
+        
         var countP1 = 0; var costP1 = 15;
         var countP2 = 0; var costP2 = 100;
+        var countP3 = 0; var costP3 = 500;
+        var countP4 = 0; var costP4 = 3000;
+        var countP5 = 0; var costP5 = 10000;
 
         // Core click execution
         function clickBeats() {
-            score = score + beatsPerClick;
+            var multiplier = 1;
+            if (document.body.classList.contains('matrix-mode')) {
+                multiplier = 10;
+            }
+            score = score + (beatsPerClick * multiplier);
             updateUI();
         }
 
@@ -206,46 +280,100 @@
             }
         }
 
-        // Standard direct UI updates (Zero loops to avoid script crashes)
-        function updateUI() {
-            document.getElementById('score').innerText = score;
-            document.getElementById('bpc-display').innerText = beatsPerClick;
-            document.getElementById('bps-display').innerText = beatsPerSecond;
-
-            // Update Item 1
-            document.getElementById('count-c1').innerText = countC1;
-            document.getElementById('btn-c1').innerText = 'Cost: ' + costC1;
-            document.getElementById('btn-c1').disabled = (score < costC1);
-
-            // Update Item 2
-            document.getElementById('count-c2').innerText = countC2;
-            document.getElementById('btn-c2').innerText = 'Cost: ' + costC2;
-            document.getElementById('btn-c2').disabled = (score < costC2);
-
-            // Update Item 3
-            document.getElementById('count-c3').innerText = countC3;
-            document.getElementById('btn-c3').innerText = 'Cost: ' + costC3;
-            document.getElementById('btn-c3').disabled = (score < costC3);
-
-            // Update Track 1
-            document.getElementById('count-p1').innerText = countP1;
-            document.getElementById('btn-p1').innerText = 'Cost: ' + costP1;
-            document.getElementById('btn-p1').disabled = (score < costP1);
-
-            // Update Track 2
-            document.getElementById('count-p2').innerText = countP2;
-            document.getElementById('btn-p2').innerText = 'Cost: ' + costP2;
-            document.getElementById('btn-p2').disabled = (score < costP2);
-        }
-
-        // Time ticker loop
-        setInterval(function() {
-            score = score + beatsPerSecond;
-            updateUI();
-        }, 1000);
-
-        // Run baseline setup immediately
-        updateUI();
-    </script>
-</body>
-</html>
+        // Passive Track 3
+        function buyTechnoPulse() {
+            if (score >= costP3) {
+                score = score - costP3;
+                countP3 = countP3 + 1;
+                beatsPerSecond = beatsPerSecond + 25;
+costP3 = Math.floor(costP3 * 1.15);
+updateUI();
+}
+}
+// Passive Track 4
+function buyBreakbeatEnergy() {
+if (score >= costP4) {
+score = score - costP4;
+countP4 = countP4 + 1;
+beatsPerSecond = beatsPerSecond + 100;
+costP4 = Math.floor(costP4 * 1.15);
+updateUI();
+}
+}
+// Passive Track 5
+function buyCyberOverdrive() {
+if (score >= costP5) {
+score = score - costP5;
+countP5 = countP5 + 1;
+beatsPerSecond = beatsPerSecond + 500;
+costP5 = Math.floor(costP5 * 1.15);
+updateUI();
+}
+}
+// Secret Code Features
+function checkCode() {
+var input = document.getElementById('matrix-code').value;
+if (input === '999') {
+enterMatrixMode();
+}
+}
+function enterMatrixMode() {
+document.body.classList.add('matrix-mode');
+document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
+document.getElementById('click-trigger').innerText = "TAP THE CODE";
+document.getElementById('secret-section').style.display = 'none';
+document.getElementById('back-button').style.display = 'inline-block';
+document.getElementById('matrix-code').value = '';
+updateUI();
+}
+function exitMatrixMode() {
+document.body.classList.remove('matrix-mode');
+document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
+document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
+document.getElementById('secret-section').style.display = 'block';
+document.getElementById('back-button').style.display = 'none';
+updateUI();
+}
+// Standard direct UI updates (Ultra-safe engine)
+function updateUI() {
+document.getElementById('score').innerText = score;
+document.getElementById('bps-display').innerText = beatsPerSecond;
+var multiplier = 1;
+if (document.body.classList.contains('matrix-mode')) {
+multiplier = 10;
+}
+document.getElementById('bpc-display').innerText = beatsPerClick * multiplier;
+// Update Clicking Items
+document.getElementById('count-c1').innerText = countC1;
+document.getElementById('btn-c1').innerText = 'Cost: ' + costC1;
+document.getElementById('btn-c1').disabled = (score < costC1);
+document.getElementById('count-c2').innerText = countC2;
+document.getElementById('btn-c2').innerText = 'Cost: ' + costC2;
+document.getElementById('btn-c2').disabled = (score < costC2);
+document.getElementById('count-c3').innerText = countC3;
+document.getElementById('btn-c3').innerText = 'Cost: ' + costC3;
+document.getElementById('btn-c3').disabled = (score < costC3);
+// Update Track Items
+document.getElementById('count-p1').innerText = countP1;
+document.getElementById('btn-p1').innerText = 'Cost: ' + costP1;
+document.getElementById('btn-p1').disabled = (score < costP1);
+document.getElementById('count-p2').innerText = countP2;
+document.getElementById('btn-p2').innerText = 'Cost: ' + costP2;
+document.getElementById('btn-p2').disabled = (score < costP2);
+document.getElementById('count-p3').innerText = countP3;
+document.getElementById('btn-p3').innerText = 'Cost: ' + costP3;
+document.getElementById('btn-p3').disabled = (score < costP3);
+document.getElementById('count-p4').innerText = countP4;
+document.getElementById('btn-p4').innerText = 'Cost: ' + costP4;
+document.getElementById('btn-p4').disabled = (score < costP4);
+document.getElementById('count-p5').innerText = countP5;
+document.getElementById('btn-p5').innerText = 'Cost: ' + costP5;
+document.getElementById('btn-p5').disabled = (score < costP5);
+}
+// Time ticker loop
+setInterval(function() {
+score = score + beatsPerSecond;
+updateUI();
+}, 1000);
+// Run baseline setup immediately
+updateUI();
