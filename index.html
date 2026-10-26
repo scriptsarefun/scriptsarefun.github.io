@@ -119,18 +119,76 @@
         <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
         <div class="score-display">Beats: <span id="score">0</span></div>
         <div style="margin-bottom: 10px;">Beats Per Click (BPC): <span id="bpc-display">1</span></div>
-        <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
         
         <div class="panel">
             <h3>Buy & Unlock Clicking Upgrades</h3>
-            <div id="click-upgrades-container"></div>
+            <div id="click-upgrades-container">
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Heavy Drumsticks</strong><br>
+                        <small>Gives +1 BPC | Owned: <span id="count-c1">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-c1" onclick="buyClickUpgrade('c1', 10, 1)">Cost: 10</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Amplified Mouse</strong><br>
+                        <small>Gives +5 BPC | Owned: <span id="count-c2">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-c2" onclick="buyClickUpgrade('c2', 80, 5)">Cost: 80</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Macro Beat Generator</strong><br>
+                        <small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-c3" onclick="buyClickUpgrade('c3', 400, 20)">Cost: 400</button>
+                </div>
+            </div>
         </div>
 
         <div class="panel">
             <h3>Buy & Unlock Background Tracks</h3>
-            <div id="upgrades-container"></div>
+            <div id="upgrades-container">
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Upbeat Synth Theme</strong><br>
+                        <small>Gives +1 BPS | Owned: <span id="count-p1">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-p1" onclick="buyPassiveUpgrade('p1', 15, 1)">Cost: 15</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Acoustic Funk Groove</strong><br>
+                        <small>Gives +5 BPS | Owned: <span id="count-p2">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-p2" onclick="buyPassiveUpgrade('p2', 100, 5)">Cost: 100</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Club Techno Pulse</strong><br>
+                        <small>Gives +25 BPS | Owned: <span id="count-p3">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-p3" onclick="buyPassiveUpgrade('p3', 500, 25)">Cost: 500</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Fast Breakbeat Energy</strong><br>
+                        <small>Gives +100 BPS | Owned: <span id="count-p4">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-p4" onclick="buyPassiveUpgrade('p4', 3000, 100)">Cost: 3000</button>
+                </div>
+                <div class="upgrade-item">
+                    <div>
+                        <strong>Cyber Arpeggio Overdrive</strong><br>
+                        <small>Gives +500 BPS | Owned: <span id="count-p5">0</span></small>
+                    </div>
+                    <button class="buy-btn" id="btn-p5" onclick="buyPassiveUpgrade('p5', 10000, 500)">Cost: 10000</button>
+                </div>
+            </div>
         </div>
         
         <div id="secret-section">
@@ -144,58 +202,18 @@
         let score = 0;
         let beatsPerSecond = 0;
         let beatsPerClick = 1;
-        let currentAudio = null;
-        let lastPlayedUrl = "";
         let synthCtx = null;
 
-        const clickUpgrades = [
-            { id: 101, name: "Heavy Drumsticks", cost: 10, bpcAdd: 1, count: 0 },
-            { id: 102, name: "Amplified Mouse", cost: 80, bpcAdd: 5, count: 0 },
-            { id: 103, name: "Macro Beat Generator", cost: 400, bpcAdd: 20, count: 0 }
-        ];
-
-        const upgrades = [
-            { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
-            { id: 2, name: "Acoustic Funk Groove", cost: 100, bps: 5, count: 0, url: "https://wikimedia.org" },
-            { id: 3, name: "Club Techno Pulse", cost: 500, bps: 25, count: 0, url: "https://wikimedia.org" },
-            { id: 4, name: "Fast Breakbeat Energy", cost: 3000, bps: 100, count: 0, url: "https://wikimedia.org" },
-            { id: 5, name: "Cyber Arpeggio Overdrive", cost: 10000, bps: 500, count: 0, url: "https://wikimedia.org" }
-        ];
-
-        function initGame() {
-            const clickContainer = document.getElementById('click-upgrades-container');
-            clickContainer.innerHTML = '';
-            clickUpgrades.forEach(up => {
-                clickContainer.innerHTML += `
-                    <div class="upgrade-item" id="item-${up.id}">
-                        <div>
-                            <strong>${up.name}</strong><br>
-                            <small>Gives +${up.bpcAdd} BPC | Owned: <span id="count-${up.id}">0</span></small>
-                        </div>
-                        <button class="buy-btn" id="btn-${up.id}" onclick="buyClickUpgrade(${up.id})">
-                            Cost: ${up.cost}
-                        </button>
-                    </div>
-                `;
-            });
-
-            const container = document.getElementById('upgrades-container');
-            container.innerHTML = '';
-            upgrades.forEach(up => {
-                container.innerHTML += `
-                    <div class="upgrade-item" id="item-${up.id}">
-                        <div>
-                            <strong>${up.name}</strong><br>
-                            <small>Gives +${up.bps} BPS | Owned: <span id="count-${up.id}">0</span></small>
-                        </div>
-                        <button class="buy-btn" id="btn-${up.id}" onclick="buyUpgrade(${up.id})">
-                            Cost: ${up.cost}
-                        </button>
-                    </div>
-                `;
-            });
-            updateUI();
-        }
+        const upgradeStates = {
+            c1: { count: 0, cost: 10 },
+            c2: { count: 0, cost: 80 },
+            c3: { count: 0, cost: 400 },
+            p1: { count: 0, cost: 15 },
+            p2: { count: 0, cost: 100 },
+            p3: { count: 0, cost: 500 },
+            p4: { count: 0, cost: 3000 },
+            p5: { count: 0, cost: 10000 }
+        };
 
         function playClickSound() {
             try {
@@ -214,7 +232,7 @@
                 osc.start();
                 osc.stop(synthCtx.currentTime + 0.04);
             } catch (error) {
-                console.log("Audio contextual playback blocked by browser settings.");
+                // Audio block fail-silent
             }
         }
 
@@ -225,48 +243,25 @@
             updateUI();
         }
 
-        function buyClickUpgrade(id) {
-            const upgrade = clickUpgrades.find(up => up.id === id);
-            if (score >= upgrade.cost) {
-                score -= upgrade.cost;
-                upgrade.count++;
-                upgrade.cost = Math.floor(upgrade.cost * 1.15);
-                calculateBPC();
+        function buyClickUpgrade(id, baseCost, value) {
+            let item = upgradeStates[id];
+            if (score >= item.cost) {
+                score -= item.cost;
+                item.count++;
+                beatsPerClick += value;
+                item.cost = Math.floor(item.cost * 1.15);
                 updateUI();
             }
         }
 
-        function buyUpgrade(id) {
-            const upgrade = upgrades.find(up => up.id === id);
-            if (score >= upgrade.cost) {
-                score -= upgrade.cost;
-                upgrade.count++;
-                upgrade.cost = Math.floor(upgrade.cost * 1.15);
-                calculateBPS();
-                lastPlayedUrl = upgrade.url;
-                playTrack(upgrade.url);
+        function buyPassiveUpgrade(id, baseCost, value) {
+            let item = upgradeStates[id];
+            if (score >= item.cost) {
+                score -= item.cost;
+                item.count++;
+                beatsPerSecond += value;
+                item.cost = Math.floor(item.cost * 1.15);
                 updateUI();
             }
         }
 
-        function playTrack(url) {
-            if (currentAudio) {
-                currentAudio.pause();
-            }
-            currentAudio = new Audio(url);
-            currentAudio.loop = true;
-            currentAudio.volume = 1.0;
-            currentAudio.play().catch(e => console.log("Interaction restriction caught."));
-        }
-
-        function calculateBPC() {
-            beatsPerClick = 1 + clickUpgrades.reduce((total, up) => total + (up.count * up.bpcAdd), 0);
-        }
-
-        function calculateBPS() {
-            beatsPerSecond = upgrades.reduce((total, up) => total + (up.count * up.bps), 0);
-        }
-
-        function updateUI() {
-            document.getElementById('score').innerText = Math.floor(score);
-            document.getElementById('bps').innerText = beatsPerSecond;
