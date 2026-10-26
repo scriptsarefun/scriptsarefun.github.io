@@ -11,7 +11,6 @@
             --accent-color: #e94560;
             --panel-bg: #16213e;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
@@ -23,7 +22,6 @@
             align-items: center;
             transition: all 0.5s ease;
         }
-
         body.matrix-mode {
             --bg-color: #000000;
             --text-color: #00ff00;
@@ -31,19 +29,16 @@
             --panel-bg: #0d1f0d;
             font-family: 'Courier New', Courier, monospace;
         }
-
         .container {
             max-width: 600px;
             width: 100%;
             text-align: center;
         }
-
         .score-display {
             font-size: 2.5rem;
             margin: 20px 0;
             font-weight: bold;
         }
-
         .click-btn {
             background-color: var(--accent-color);
             color: white;
@@ -55,17 +50,14 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: transform 0.1s;
         }
-
         .matrix-mode .click-btn {
             color: #00ff00;
             border: 2px solid #00ff00;
             background: transparent;
         }
-
         .click-btn:active {
             transform: scale(0.95);
         }
-
         .panel {
             background-color: var(--panel-bg);
             border-radius: 15px;
@@ -73,7 +65,6 @@
             margin-top: 30px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
         .upgrade-item {
             display: flex;
             justify-content: space-between;
@@ -81,11 +72,9 @@
             padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .upgrade-item:last-child {
             border-bottom: none;
         }
-
         .buy-btn {
             background-color: #0f3460;
             color: white;
@@ -94,19 +83,16 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         .matrix-mode .buy-btn {
             border: 1px solid #00ff00;
             background: transparent;
             color: #00ff00;
         }
-
         .buy-btn:disabled {
             background-color: #444;
             color: #888;
             cursor: not-allowed;
         }
-
         .secret-input {
             margin-top: 20px;
             padding: 10px;
@@ -116,7 +102,6 @@
             color: #fff;
             text-align: center;
         }
-
         .back-btn {
             display: none;
             margin-top: 20px;
@@ -130,36 +115,44 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1 id="game-title">🎵 Beat Clicker 🎵</h1>
-        
         <div class="score-display">Beats: <span id="score">0</span></div>
-        <div style="margin-bottom: 10px;">Beats Per Second (BPS): <span id="bps">0</span></div>
+        <div style="margin-bottom: 10px;">Beats Per Click (BPC): <span id="bpc-display">1</span></div>
+        <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps">0</span></div>
         
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
+        
+        <div class="panel">
+            <h3>Buy & Unlock Clicking Upgrades</h3>
+            <div id="click-upgrades-container"></div>
+        </div>
 
         <div class="panel">
             <h3>Buy & Unlock Background Tracks</h3>
             <div id="upgrades-container"></div>
         </div>
-
+        
         <div id="secret-section">
             <p>Enter Secret Code:</p>
             <input type="password" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
         </div>
-
         <button id="back-button" class="back-btn" onclick="exitMatrixMode()">⬅ Go Back to Reality</button>
     </div>
 
     <script>
         let score = 0;
         let beatsPerSecond = 0;
+        let beatsPerClick = 1;
         let currentAudio = null;
         let lastPlayedUrl = "";
-        
-        // Setup internal audio generator context
         let synthCtx = null;
+
+        const clickUpgrades = [
+            { id: 101, name: "Heavy Drumsticks", cost: 10, bpcAdd: 1, count: 0 },
+            { id: 102, name: "Amplified Mouse", cost: 80, bpcAdd: 5, count: 0 },
+            { id: 103, name: "Macro Beat Generator", cost: 400, bpcAdd: 20, count: 0 }
+        ];
 
         const upgrades = [
             { id: 1, name: "Upbeat Synth Theme", cost: 15, bps: 1, count: 0, url: "https://wikimedia.org" },
@@ -170,9 +163,24 @@
         ];
 
         function initGame() {
+            const clickContainer = document.getElementById('click-upgrades-container');
+            clickContainer.innerHTML = '';
+            clickUpgrades.forEach(up => {
+                clickContainer.innerHTML += `
+                    <div class="upgrade-item" id="item-${up.id}">
+                        <div>
+                            <strong>${up.name}</strong><br>
+                            <small>Gives +${up.bpcAdd} BPC | Owned: <span id="count-${up.id}">0</span></small>
+                        </div>
+                        <button class="buy-btn" id="btn-${up.id}" onclick="buyClickUpgrade(${up.id})">
+                            Cost: ${up.cost}
+                        </button>
+                    </div>
+                `;
+            });
+
             const container = document.getElementById('upgrades-container');
             container.innerHTML = '';
-            
             upgrades.forEach(up => {
                 container.innerHTML += `
                     <div class="upgrade-item" id="item-${up.id}">
@@ -189,27 +197,20 @@
             updateUI();
         }
 
-        // Native Synth Click Player (Bypasses URL blocks entirely)
         function playClickSound() {
             try {
                 if (!synthCtx) {
                     synthCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
                 let osc = synthCtx.createOscillator();
                 let gain = synthCtx.createGain();
-                
                 osc.type = 'sine';
-                // Generates a clean high-pitched electronic snap sound
                 osc.frequency.setValueAtTime(600, synthCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(100, synthCtx.currentTime + 0.04);
-                
                 gain.gain.setValueAtTime(0.3, synthCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, synthCtx.currentTime + 0.04);
-                
                 osc.connect(gain);
                 gain.connect(synthCtx.destination);
-                
                 osc.start();
                 osc.stop(synthCtx.currentTime + 0.04);
             } catch (error) {
@@ -218,10 +219,21 @@
         }
 
         function clickBeats() {
-            playClickSound(); // Triggers crisp click instantly on user tap
+            playClickSound();
             const multiplier = document.body.classList.contains('matrix-mode') ? 10 : 1;
-            score += multiplier;
+            score += beatsPerClick * multiplier;
             updateUI();
+        }
+
+        function buyClickUpgrade(id) {
+            const upgrade = clickUpgrades.find(up => up.id === id);
+            if (score >= upgrade.cost) {
+                score -= upgrade.cost;
+                upgrade.count++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.15);
+                calculateBPC();
+                updateUI();
+            }
         }
 
         function buyUpgrade(id) {
@@ -231,8 +243,8 @@
                 upgrade.count++;
                 upgrade.cost = Math.floor(upgrade.cost * 1.15);
                 calculateBPS();
-                lastPlayedUrl = upgrade.url; 
-                playTrack(upgrade.url); 
+                lastPlayedUrl = upgrade.url;
+                playTrack(upgrade.url);
                 updateUI();
             }
         }
@@ -243,8 +255,12 @@
             }
             currentAudio = new Audio(url);
             currentAudio.loop = true;
-            currentAudio.volume = 1.0; 
+            currentAudio.volume = 1.0;
             currentAudio.play().catch(e => console.log("Interaction restriction caught."));
+        }
+
+        function calculateBPC() {
+            beatsPerClick = 1 + clickUpgrades.reduce((total, up) => total + (up.count * up.bpcAdd), 0);
         }
 
         function calculateBPS() {
@@ -254,45 +270,3 @@
         function updateUI() {
             document.getElementById('score').innerText = Math.floor(score);
             document.getElementById('bps').innerText = beatsPerSecond;
-
-            upgrades.forEach(up => {
-                document.getElementById(`count-${up.id}`).innerText = up.count;
-                const btn = document.getElementById(`btn-${up.id}`);
-                btn.innerText = `Cost: ${up.cost}`;
-                btn.disabled = score < up.cost;
-            });
-        }
-
-        function checkCode() {
-            const input = document.getElementById('matrix-code').value;
-            if (input === '999') {
-                enterMatrixMode();
-            }
-        }
-
-        function enterMatrixMode() {
-            document.body.classList.add('matrix-mode');
-            document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
-            document.getElementById('click-trigger').innerText = "TAP THE CODE";
-            document.getElementById('secret-section').style.display = 'none';
-            document.getElementById('back-button').style.display = 'inline-block';
-            document.getElementById('matrix-code').value = '';
-        }
-
-        function exitMatrixMode() {
-            document.body.classList.remove('matrix-mode');
-            document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
-            document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
-            document.getElementById('secret-section').style.display = 'block';
-            document.getElementById('back-button').style.display = 'none';
-        }
-
-        setInterval(() => {
-            score += beatsPerSecond;
-            updateUI();
-        }, 1000);
-
-        initGame();
-    </script>
-</body>
-</html>
