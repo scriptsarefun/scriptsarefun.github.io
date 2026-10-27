@@ -152,6 +152,9 @@
             color: white;
             box-shadow: 0 0 10px #ff007f;
         }
+        .audio-controls {
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -162,6 +165,10 @@
         <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
 
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
+        
+        <div class="audio-controls">
+            <button class="buy-btn" id="mute-btn" onclick="toggleMute()">Mute Audio</button>
+        </div>
 
         <!-- CLICKING UPGRADES -->
         <div class="panel">
@@ -308,7 +315,68 @@
         var countP9 = 0; var costP9 = 15000000;
         var countP10 = 0; var costP10 = 100000000;
 
+        // Sound Synthesis Setup
+        var audioCtx = null;
+        var isMuted = false;
+        var activeNodes = [];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                startBackgroundMusic();
+            }
+        }
+
+        function playClickSound() {
+            if (isMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function startBackgroundMusic() {
+            if (!audioCtx || isMuted) return;
+            // Simple synthesized beep beat loop
+            setInterval(() => {
+                if (beatsPerSecond > 0 && !isMuted) {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    let speedFactor = Math.min(beatsPerSecond / 10, 1000);
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300 + speedFactor, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                }
+            }, 1000);
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "Unmute Audio" : "Mute Audio";
+        }
+
         function clickBeats() {
+            playClickSound();
             var currentBPC = beatsPerClick;
             
             if (document.body.classList.contains('matrix-mode')) {
@@ -378,6 +446,7 @@
                 beatsPerSecond = beatsPerSecond + 1;
                 costP1 = Math.floor(costP1 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -388,6 +457,7 @@
                 beatsPerSecond = beatsPerSecond + 5;
                 costP2 = Math.floor(costP2 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -398,6 +468,7 @@
                 beatsPerSecond = beatsPerSecond + 25;
                 costP3 = Math.floor(costP3 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -408,6 +479,7 @@
                 beatsPerSecond = beatsPerSecond + 100;
                 costP4 = Math.floor(costP4 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -418,6 +490,7 @@
                 beatsPerSecond = beatsPerSecond + 500;
                 costP5 = Math.floor(costP5 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -428,6 +501,7 @@
                 beatsPerSecond = beatsPerSecond + 2500;
                 costP6 = Math.floor(costP6 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -438,6 +512,7 @@
                 beatsPerSecond = beatsPerSecond + 10000;
                 costP7 = Math.floor(costP7 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -448,6 +523,7 @@
                 beatsPerSecond = beatsPerSecond + 50000;
                 costP8 = Math.floor(costP8 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
@@ -458,10 +534,10 @@
                 beatsPerSecond = beatsPerSecond + 250000;
                 costP9 = Math.floor(costP9 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
-        // Added Track 10
         function buyOmniverseMasterpiece() {
             if (score >= costP10) {
                 score = score - costP10;
@@ -469,6 +545,7 @@
                 beatsPerSecond = beatsPerSecond + 1000000;
                 costP10 = Math.floor(costP10 * 1.15);
                 updateUI();
+                initAudio();
             }
         }
 
