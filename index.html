@@ -26,41 +26,57 @@
             height: 100vh;
             z-index: -1;
             display: none;
-            background-color: rgba(18, 18, 18, 0.9);
+            background-color: rgba(18, 18, 18, 0.95);
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             text-align: center;
+            position: relative;
             z-index: 1;
         }
 
         h1 {
             color: #ff007f;
             text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
-        .matrix-mode h1 {
-            color: #00ff00;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        .rebirth-display {
+            font-size: 1.1rem;
+            color: #ffaa00;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .stats-panel {
-            background-color: #1e1e1e;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(5px);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: all 0.3s;
+            border: 1px solid #333;
         }
 
-        .matrix-mode .stats-panel, .matrix-mode .card, .matrix-mode .achievements-panel, .matrix-mode .secret-code-section {
-            background-color: rgba(16, 28, 16, 0.75) !important;
+        .matrix-mode .stats-panel, 
+        .matrix-mode .card, 
+        .matrix-mode .achievements-panel,
+        .matrix-mode .control-panel {
+            background-color: rgba(15, 25, 15, 0.85) !important;
             border: 1px solid #00ff00 !important;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2) !important;
+        }
+
+        .matrix-mode h1, .matrix-mode .section-title, .matrix-mode h3 {
+            color: #00ff00 !important;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.6) !important;
+        }
+
+        .matrix-mode .click-btn {
+            background: linear-gradient(45deg, #00ff00, #005500) !important;
+            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.4) !important;
         }
 
         .stat {
@@ -69,25 +85,45 @@
         }
 
         #score {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: bold;
             color: #00f0ff;
-            transition: color 0.3s;
+        }
+        .matrix-mode #score { color: #00ff00 !important; }
+
+        .click-btn {
+            background: linear-gradient(45deg, #ff007f, #7f00ff);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4);
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin-bottom: 25px;
         }
 
-        .matrix-mode #score {
-            color: #00ff00;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        .click-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 10px rgba(255, 0, 127, 0.4);
         }
 
-        .action-row {
+        .control-panel {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid #333;
         }
 
-        .action-btn {
+        .control-btn {
             background-color: #333;
             color: white;
             border: 1px solid #555;
@@ -97,61 +133,39 @@
             font-weight: bold;
             transition: all 0.2s;
         }
-
-        .action-btn:hover {
-            background-color: #444;
+        .control-btn:hover:not(:disabled) {
+            background-color: #00f0ff;
+            color: black;
+            border-color: #00f0ff;
         }
-
-        #rebirthBtn {
-            background: linear-gradient(45deg, #7f00ff, #ff007f);
-            border: none;
-        }
-        #rebirthBtn:disabled {
-            background: #222;
+        .control-btn:disabled {
+            background-color: #222;
             color: #555;
+            border-color: #222;
             cursor: not-allowed;
         }
 
-        .click-btn {
-            background: linear-gradient(45deg, #ff007f, #7f00ff);
+        select {
+            background-color: #111;
             color: white;
-            border: none;
-            padding: 20px 40px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 50px;
+            border: 1px solid #555;
+            padding: 10px;
+            border-radius: 5px;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4);
-            transition: transform 0.1s, box-shadow 0.1s, background 0.3s;
-            margin-bottom: 30px;
-        }
-
-        .matrix-mode .click-btn {
-            background: linear-gradient(45deg, #00aa00, #00ff00);
-            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.4);
-            color: #000;
-        }
-
-        .click-btn:active {
-            transform: scale(0.95);
+            font-weight: bold;
         }
 
         .section-title {
             color: #00f0ff;
             border-bottom: 2px solid #333;
             padding-bottom: 5px;
-            margin-top: 30px;
+            margin-top: 35px;
             text-align: left;
-            transition: color 0.3s;
-        }
-        .matrix-mode .section-title {
-            color: #00ff00;
-            border-bottom-color: #00aa00;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -165,12 +179,16 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.3s;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
         }
 
         .card h4 {
             margin: 0 0 5px 0;
             color: #fff;
+            font-size: 1.1rem;
         }
 
         .card p {
@@ -183,11 +201,11 @@
             background-color: #333;
             color: #fff;
             border: 1px solid #555;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 12px;
             transition: background-color 0.2s;
         }
 
@@ -197,8 +215,8 @@
         }
         .matrix-mode .card button:hover:not(:disabled) {
             background-color: #00ff00;
+            color: black;
             border-color: #00ff00;
-            color: #000;
         }
 
         .card button:disabled {
@@ -216,7 +234,6 @@
             margin-bottom: 25px;
             width: 100%;
             box-sizing: border-box;
-            transition: all 0.3s;
         }
 
         .achievement-list {
@@ -240,10 +257,6 @@
             border-left-color: #00f0ff;
             background-color: #16222f;
         }
-        .matrix-mode .achievement-item.unlocked {
-            border-left-color: #00ff00;
-            background-color: rgba(0, 50, 0, 0.4);
-        }
 
         .achievement-status {
             font-weight: bold;
@@ -254,59 +267,64 @@
         .achievement-item.unlocked .achievement-status {
             color: #00f0ff;
         }
+        .matrix-mode .achievement-item.unlocked {
+            border-left-color: #00ff00;
+            background-color: #0a150a;
+        }
         .matrix-mode .achievement-item.unlocked .achievement-status {
             color: #00ff00;
-        }
-
-        .instrument-select {
-            background-color: #111;
-            color: white;
-            border: 1px solid #444;
-            padding: 8px;
-            border-radius: 4px;
-            width: 100%;
-            max-width: 250px;
-            margin-bottom: 10px;
         }
 
         .secret-code-section {
             margin-top: 40px;
             margin-bottom: 40px;
-            padding: 15px;
-            background-color: #1e1e1e;
+            padding: 20px;
+            background-color: rgba(30, 30, 30, 0.85);
             border-radius: 8px;
-            transition: all 0.3s;
+            border: 1px solid #333;
         }
 
         .secret-code-section input {
             background-color: #111;
             border: 1px solid #444;
             color: white;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
             margin-right: 10px;
+            width: 200px;
         }
 
         .secret-code-section button {
             background-color: #444;
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
+        }
+        .secret-code-section button:hover {
+            background-color: #555;
         }
 
         .back-link {
-            color: #aaa;
+            color: #ff3b3b;
             text-decoration: none;
-            font-size: 0.9rem;
-            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
+            border: 1px solid #ff3b3b;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            cursor: pointer;
         }
 
         .back-link:hover {
-            color: #fff;
+            background-color: #ff3b3b;
+            color: white;
+            box-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
         }
     </style>
 </head>
@@ -314,34 +332,33 @@
 
 <canvas id="matrixCanvas"></canvas>
 
-<div class="container">
-    <h1 id="gameTitle">🎵 Beat Clicker 🎵</h1>
+<div class="container" id="gameContainer">
+    <h1>🎵 Ultimate Music Clicker 🎵</h1>
+    <div class="rebirth-display" id="rebirthDisplay">Rebirth Tier: 0 (Multiplier: +0% Global Production)</div>
 
     <div class="stats-panel">
         <div class="stat">Beats: <span id="score">0</span></div>
         <div class="stat">Beats Per Click (BPC): <span id="bpc">1</span></div>
         <div class="stat">Beats Per Second (BPS): <span id="bps">0</span></div>
-        <div class="stat">Rebirth Tier: <span id="rebirthTier">0</span> (Multiplier: <span id="rebirthMult">1</span>x)</div>
-    </div>
-
-    <div class="action-row">
-        <button class="action-btn" id="saveBtn">💾 Save Game</button>
-        <button class="action-btn" id="rebirthBtn" disabled>🌟 Rebirth (Req: 1M)</button>
     </div>
 
     <button class="click-btn" id="clickBtn">DROP THE BEAT!</button>
 
-    <div class="achievements-panel">
-        <h3 style="margin-top: 0; color: #00f0ff; text-align: left;" id="achHeader">🏆 Achievements</h3>
-        <div class="achievement-list" id="achievementsList"></div>
+    <div class="control-panel">
+        <button class="control-btn" id="saveBtn">💾 Save Game</button>
+        <button class="control-btn" id="rebirthBtn" disabled>🌟 Rebirth (Requires 1M Beats)</button>
+        <div>
+            <label for="instrumentSelect" style="font-weight:bold; margin-right:5px;">🎷 Instruments:</label>
+            <select id="instrumentSelect">
+                <option value="mute">Mute / Electronic Sync</option>
+                <option value="drumsticks">Wooden Drumsticks</option>
+            </select>
+        </div>
     </div>
 
-    <h3 class="section-title">🎷 Instruments Section</h3>
-    <div style="text-align: left; margin-bottom: 20px;">
-        <select id="instrumentSelector" class="instrument-select">
-            <option value="mute">Mute / Electronic Sync</option>
-            <option value="drumsticks">Wooden Drumsticks</option>
-        </select>
+    <div class="achievements-panel">
+        <h3 style="margin-top: 0; color: #00f0ff; text-align: left;">🏆 Achievements</h3>
+        <div class="achievement-list" id="achievementsList"></div>
     </div>
 
     <h3 class="section-title">Buy & Unlock Clicking Upgrades</h3>
@@ -351,16 +368,16 @@
     <div class="grid" id="backgroundTracks"></div>
 
     <div class="secret-code-section">
-        <label for="secretCode">Enter Secret Code:</label><br><br>
+        <label for="secretCode" style="font-weight:bold;">Enter Secret Code:</label><br><br>
         <input type="text" id="secretCode" placeholder="Code...">
         <button id="submitCode">Submit</button>
     </div>
 
-    <div id="backToReality" class="back-link">⬅ Go Back to Reality</div>
+    <div class="back-link" id="realityBtn">⬅ Go Back to Reality</div>
 </div>
 
 <script>
-    // Audio Context Generation (Web Audio API)
+    // Audio Context Setup
     let audioCtx = null;
     function playDrumstickSound() {
         try {
@@ -371,30 +388,46 @@
                 audioCtx.resume();
             }
 
-            // Create nodes
+            // High frequency click node
             let osc = audioCtx.createOscillator();
             let gainNode = audioCtx.createGain();
             
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            // High pitch decay curve for sharp wooden impact
-            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.04);
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.04);
             
-            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
             
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
+            osc.stop(audioCtx.currentTime + 0.04);
         } catch(e) {
-            console.error("Audio Synthesis error: ", e);
+            console.error("Audio error: ", e);
         }
     }
 
-    // Base Configurations (Legitimate values cached)
-    const initialClickingUpgrades = [
+    // Game Core State
+    let state = {
+        beats: 0,
+        bpc: 1,
+        bps: 0,
+        rebirths: 0,
+        totalTracksBought: 0
+    };
+
+    // Active Cheat modifiers separate from base game logic
+    let cheats = {
+        active: false,
+        matrixRain: false,
+        bpc_inject: 0,
+        bps_inject: 0
+    };
+
+    // Upgrades Config - Enhanced list up to tier 15
+    const clickingUpgrades = [
         { id: 'bpc_1', name: 'Heavy Drumsticks', effect: 1, cost: 10, owned: 0 },
         { id: 'bpc_2', name: 'Amplified Mouse', effect: 5, cost: 80, owned: 0 },
         { id: 'bpc_3', name: 'Macro Beat Generator', effect: 20, cost: 400, owned: 0 },
@@ -404,10 +437,15 @@
         { id: 'bpc_7', name: 'Dimensional Rhythm Warp', effect: 10000, cost: 550000, owned: 0 },
         { id: 'bpc_8', name: 'Chrono Beat Fracturer', effect: 50000, cost: 3500000, owned: 0 },
         { id: 'bpc_9', name: 'Dark Matter Pulsator', effect: 250000, cost: 24000000, owned: 0 },
-        { id: 'bpc_10', name: 'Infinity Drum', effect: 1000000, cost: 180000000, owned: 0 }
+        { id: 'bpc_10', name: 'Infinity Drum', effect: 1000000, cost: 180000000, owned: 0 },
+        { id: 'bpc_11', name: 'Supernova Strike Plectrum', effect: 5000000, cost: 1500000000, owned: 0 },
+        { id: 'bpc_12', name: 'Hyper-Dimensional Gong', effect: 25000000, cost: 12000000000, owned: 0 },
+        { id: 'bpc_13', name: 'Timeless Pulse Injector', effect: 150000000, cost: 95000000000, owned: 0 },
+        { id: 'bpc_14', name: 'Cosmic Strings Plucker', effect: 1000000000, cost: 800000000000, owned: 0 },
+        { id: 'bpc_15', name: 'Multiverse Singularity Tap', effect: 10000000000, cost: 7500000000000, owned: 0 }
     ];
 
-    const initialBackgroundTracks = [
+    const backgroundTracks = [
         { id: 'bps_1', name: 'Upbeat Synth Theme', effect: 1, cost: 15, owned: 0 },
         { id: 'bps_2', name: 'Acoustic Funk Groove', effect: 5, cost: 100, owned: 0 },
         { id: 'bps_3', name: 'Club Techno Pulse', effect: 25, cost: 500, owned: 0 },
@@ -422,86 +460,67 @@
         { id: 'bps_12', name: 'Supernova Baseline', effect: 25000000, cost: 4000000000, owned: 0 },
         { id: 'bps_13', name: 'Infinity Symphony', effect: 100000000, cost: 25000000000, owned: 0 },
         { id: 'bps_14', name: 'Reality Tear Remix', effect: 500000000, cost: 150000000000, owned: 0 },
-        { id: 'bps_15', name: 'Cosmic Overlord Anthem', effect: 2500000000, cost: 1000000000000 }
+        { id: 'bps_15', name: 'Cosmic Overlord Anthem', effect: 2500000000, cost: 1000000000000, owned: 0 },
+        { id: 'bps_16', name: 'Chrono-Fractal Metronome', effect: 15000000000, cost: 8500000000000, owned: 0 },
+        { id: 'bps_17', name: 'Quantum Void Sub-Woofer', effect: 100000000000, cost: 70000000000000, owned: 0 },
+        { id: 'bps_18', name: 'Eternity Resonance Core', effect: 750000000000, cost: 600000000000000, owned: 0 }
     ];
-
-    // Core Game State
-    let state = {
-        beats: 0,
-        rebirths: 0,
-        totalTracksBought: 0,
-        unlockedAchievements: []
-    };
-
-    // Runtime Cheat Buffs (re-calculated on top of state base progress)
-    let cheats = {
-        matrixActive: false,
-        bonusBPC: 0,
-        bonusBPS: 0
-    };
-
-    let clickingUpgrades = JSON.parse(JSON.stringify(initialClickingUpgrades));
-    let backgroundTracks = JSON.parse(JSON.stringify(initialBackgroundTracks));
 
     const achievements = [
-        { id: 'ach_1', name: 'First Beat', desc: 'Reach 1 total beat', condition: () => state.beats >= 1 },
-        { id: 'ach_2', name: 'Getting Groovy', desc: 'Reach 100 total beats', condition: () => state.beats >= 100 },
-        { id: 'ach_3', name: 'Studio Producer', desc: 'Reach 10,000 total beats', condition: () => state.beats >= 10000 },
-        { id: 'ach_4', name: 'Beat Master', desc: 'Purchase your first background track', condition: () => state.totalTracksBought >= 1 },
-        { id: 'ach_5', name: 'Click Elite', desc: 'Reach 50 Beats Per Click (BPC)', condition: () => getCalculatedBPC() >= 50 }
+        { id: 'ach_1', name: 'First Beat', desc: 'Reach 1 total beat', unlocked: false, condition: () => state.beats >= 1 },
+        { id: 'ach_2', name: 'Getting Groovy', desc: 'Reach 100 total beats', unlocked: false, condition: () => state.beats >= 100 },
+        { id: 'ach_3', name: 'Studio Producer', desc: 'Reach 10,000 total beats', unlocked: false, condition: () => state.beats >= 10000 },
+        { id: 'ach_4', name: 'Beat Master', desc: 'Purchase your first background track', unlocked: false, condition: () => state.totalTracksBought >= 1 },
+        { id: 'ach_5', name: 'Click Elite', desc: 'Reach 50 Beats Per Click (BPC)', unlocked: false, condition: () => computeBaseBPC() >= 50 }
     ];
 
-    // DOM References
+    // DOM Links
     const scoreEl = document.getElementById('score');
     const bpcEl = document.getElementById('bpc');
     const bpsEl = document.getElementById('bps');
-    const rebirthTierEl = document.getElementById('rebirthTier');
-    const rebirthMultEl = document.getElementById('rebirthMult');
     const clickBtn = document.getElementById('clickBtn');
+    const rebirthDisplayEl = document.getElementById('rebirthDisplay');
     const rebirthBtn = document.getElementById('rebirthBtn');
     const saveBtn = document.getElementById('saveBtn');
+    const instrumentSelect = document.getElementById('instrumentSelect');
     const clickingUpgradesContainer = document.getElementById('clickingUpgrades');
     const backgroundTracksContainer = document.getElementById('backgroundTracks');
     const achievementsListContainer = document.getElementById('achievementsList');
     const secretCodeInput = document.getElementById('secretCode');
     const submitCodeBtn = document.getElementById('submitCode');
-    const backToRealityBtn = document.getElementById('backToReality');
-    const instrumentSelector = document.getElementById('instrumentSelector');
-    const canvas = document.getElementById('matrixCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Formula Helpers
-    function getRebirthMultiplier() {
-        return 1 + (state.rebirths * 2); // Base 1x + 2x per rebirth (reaches 3x, 5x, 7x...)
-    }
-
-    function getRebirthRequirement() {
-        return 1000000 * Math.pow(5, state.rebirths);
-    }
-
-    function getCalculatedBPC() {
-        let baseBPC = 1;
-        clickingUpgrades.forEach(u => baseBPC += (u.owned * u.effect));
-        return (baseBPC * getRebirthMultiplier()) + cheats.bonusBPC;
-    }
-
-    function getCalculatedBPS() {
-        let baseBPS = 0;
-        backgroundTracks.forEach(t => baseBPS += (t.owned * t.effect));
-        return (baseBPS * getRebirthMultiplier()) + cheats.bonusBPS;
-    }
+    const realityBtn = document.getElementById('realityBtn');
+    const gameContainer = document.getElementById('gameContainer');
 
     function formatNum(num) {
         return num.toLocaleString();
     }
 
-    // UI Assembly
+    function computeBaseBPC() {
+        let base = 1;
+        clickingUpgrades.forEach(u => base += u.owned * u.effect);
+        return base;
+    }
+
+    function computeBaseBPS() {
+        let base = 0;
+        backgroundTracks.forEach(t => base += t.owned * t.effect);
+        return base;
+    }
+
+    function getRebirthCost() {
+        return 1000000 * Math.pow(5, state.rebirths);
+    }
+
+    function getMultiplier() {
+        return 1 + (state.rebirths * 2); // Each rebirth layer yields +200% base
+    }
+
     function initUI() {
         clickingUpgradesContainer.innerHTML = clickingUpgrades.map((upg, idx) => `
             <div class="card" id="card-${upg.id}">
                 <div>
                     <h4>${upg.name}</h4>
-                    <p>Gives +${formatNum(upg.effect)} Base BPC</p>
+                    <p>Gives +${formatNum(upg.effect)} BPC</p>
                     <p>Owned: <span id="owned-${upg.id}">0</span></p>
                 </div>
                 <button id="btn-${upg.id}" onclick="buyClickingUpgrade(${idx})">Cost: ${formatNum(upg.cost)}</button>
@@ -512,7 +531,7 @@
             <div class="card" id="card-${track.id}">
                 <div>
                     <h4>${track.name}</h4>
-                    <p>Gives +${formatNum(track.effect)} Base BPS</p>
+                    <p>Gives +${formatNum(track.effect)} BPS</p>
                     <p>Owned: <span id="owned-${track.id}">0</span></p>
                 </div>
                 <button id="btn-${track.id}" onclick="buyBackgroundTrack(${idx})">Cost: ${formatNum(track.cost)}</button>
@@ -525,38 +544,36 @@
     }
 
     function renderAchievements() {
-        achievementsListContainer.innerHTML = achievements.map(ach => {
-            const isUnlocked = state.unlockedAchievements.includes(ach.id);
-            return `
-                <div class="achievement-item ${isUnlocked ? 'unlocked' : ''}" id="${ach.id}">
-                    <div>
-                        <strong>${ach.name}</strong> - <span style="color: #aaa; font-size: 0.9rem;">${ach.desc}</span>
-                    </div>
-                    <div class="achievement-status">${isUnlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}</div>
+        achievementsListContainer.innerHTML = achievements.map(ach => `
+            <div class="achievement-item ${ach.unlocked ? 'unlocked' : ''}" id="${ach.id}">
+                <div>
+                    <strong>${ach.name}</strong> - <span style="color: #aaa; font-size: 0.9rem;">${ach.desc}</span>
                 </div>
-            `;
-        }).join('');
+                <div class="achievement-status">${ach.unlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}</div>
+            </div>
+        `).join('');
     }
 
     function updateUI() {
-        const currentBPC = getCalculatedBPC();
-        const currentBPS = getCalculatedBPS();
-        const rebReq = getRebirthRequirement();
+        let mult = getMultiplier();
+        let currentBPC = (computeBaseBPC() * mult) + cheats.bpc_inject;
+        let currentBPS = (computeBaseBPS() * mult) + cheats.bps_inject;
 
         scoreEl.innerText = formatNum(state.beats);
         bpcEl.innerText = formatNum(currentBPC);
         bpsEl.innerText = formatNum(currentBPS);
-        rebirthTierEl.innerText = state.rebirths;
-        rebirthMultEl.innerText = getRebirthMultiplier();
 
-        rebirthBtn.innerText = `🌟 Rebirth (Req: ${formatNum(rebReq)})`;
-        rebirthBtn.disabled = state.beats < rebReq;
+        rebirthDisplayEl.innerText = `Rebirth Tier: ${state.rebirths} (Multiplier: +${state.rebirths * 200}% Global Production)`;
+
+        let rCost = getRebirthCost();
+        rebirthBtn.innerText = `🌟 Rebirth (Requires ${formatNum(rCost)} Beats)`;
+        rebirthBtn.disabled = state.beats < rCost;
 
         clickingUpgrades.forEach(upg => {
             const btn = document.getElementById(`btn-${upg.id}`);
             const ownedEl = document.getElementById(`owned-${upg.id}`);
-            if (ownedEl) ownedEl.innerText = upg.owned;
-            if (btn) {
+            if(ownedEl) ownedEl.innerText = upg.owned;
+            if(btn) {
                 btn.innerText = `Cost: ${formatNum(upg.cost)}`;
                 btn.disabled = state.beats < upg.cost;
             }
@@ -565,8 +582,8 @@
         backgroundTracks.forEach(track => {
             const btn = document.getElementById(`btn-${track.id}`);
             const ownedEl = document.getElementById(`owned-${track.id}`);
-            if (ownedEl) ownedEl.innerText = track.owned;
-            if (btn) {
+            if(ownedEl) ownedEl.innerText = track.owned;
+            if(btn) {
                 btn.innerText = `Cost: ${formatNum(track.cost)}`;
                 btn.disabled = state.beats < track.cost;
             }
@@ -576,24 +593,27 @@
     }
 
     function checkAchievements() {
-        let stateChanged = false;
+        let changed = false;
         achievements.forEach(ach => {
-            if (!state.unlockedAchievements.includes(ach.id) && ach.condition()) {
-                state.unlockedAchievements.push(ach.id);
-                stateChanged = true;
+            if (!ach.unlocked && ach.condition()) {
+                ach.unlocked = true;
+                changed = true;
             }
         });
-        if (stateChanged) {
+        if (changed) {
             renderAchievements();
         }
     }
 
-    // Loop Operations
+    // Input handlers
     clickBtn.addEventListener('click', () => {
-        if (instrumentSelector.value === 'drumsticks') {
+        let mult = getMultiplier();
+        let clickVal = (computeBaseBPC() * mult) + cheats.bpc_inject;
+        state.beats += clickVal;
+
+        if (instrumentSelect.value === 'drumsticks') {
             playDrumstickSound();
         }
-        state.beats += getCalculatedBPC();
         updateUI();
     });
 
@@ -618,142 +638,181 @@
         }
     };
 
-    // Rebirth Operation Matrix
+    // Rebirth Actions
     rebirthBtn.addEventListener('click', () => {
-        const req = getRebirthRequirement();
-        if (state.beats >= req) {
+        let rCost = getRebirthCost();
+        if (state.beats >= rCost) {
             state.beats = 0;
-            state.rebirths++;
             state.totalTracksBought = 0;
-            clickingUpgrades = JSON.parse(JSON.stringify(initialClickingUpgrades));
-            backgroundTracks = JSON.parse(JSON.stringify(initialBackgroundTracks));
+            state.rebirths++;
+
+            clickingUpgrades.forEach(u => {
+                u.owned = 0;
+                u.cost = Math.round(u.cost / Math.pow(1.15, u.owned)); // Approximate reset to original
+            });
+            // Force reset completely to baseline values
+            clickingUpgrades[0].cost = 10; clickingUpgrades[1].cost = 80; clickingUpgrades[2].cost = 400;
+            clickingUpgrades[3].cost = 2500; clickingUpgrades[4].cost = 15000; clickingUpgrades[5].cost = 90000;
+            clickingUpgrades[6].cost = 550000; clickingUpgrades[7].cost = 3500000; clickingUpgrades[8].cost = 24000000;
+            clickingUpgrades[10].cost = 1500000000; clickingUpgrades[11].cost = 12000000000; clickingUpgrades[12].cost = 95000000000;
+            clickingUpgrades[13].cost = 800000000000; clickingUpgrades[14].cost = 7500000000000;
+
+            backgroundTracks.forEach(t => { t.owned = 0; });
+            backgroundTracks[0].cost = 15; backgroundTracks[1].cost = 100; backgroundTracks[2].cost = 500;
+            backgroundTracks[3].cost = 3000; backgroundTracks[4].cost = 10000; backgroundTracks[5].cost = 60000;
+            backgroundTracks[6].cost = 350000; backgroundTracks[7].cost = 2000000; backgroundTracks[8].cost = 15000000;
+            backgroundTracks[9].cost = 100000000; backgroundTracks[11].cost = 4000000000; backgroundTracks[12].cost = 25000000000;
+            backgroundTracks[13].cost = 150000000000; backgroundTracks[14].cost = 1000000000000; backgroundTracks[15].cost = 8500000000000;
+            backgroundTracks[16].cost = 70000000000000; backgroundTracks[17].cost = 600000000000000;
+
+            saveGame();
             updateUI();
-            alert(`Congratulations! You reached Rebirth Tier ${state.rebirths}. Your production power has increased.`);
+            alert("Rebirth Complete! Your global production power has multiplied!");
         }
     });
 
-    // Save & Load Core Operations
-    saveBtn.addEventListener('click', () => {
-        const dataToSave = {
+    // Save Mechanism
+    function saveGame() {
+        let saveData = {
             state: state,
-            clickingUpgrades: clickingUpgrades,
-            backgroundTracks: backgroundTracks
+            clickingUpgrades: clickingUpgrades.map(u => ({id: u.id, owned: u.owned, cost: u.cost})),
+            backgroundTracks: backgroundTracks.map(t => ({id: t.id, owned: t.owned, cost: t.cost})),
+            achievements: achievements.map(a => ({id: a.id, unlocked: a.unlocked}))
         };
-        localStorage.setItem('musicClicker_saveData', JSON.stringify(dataToSave));
-        alert('Game progress saved securely!');
-    });
+        localStorage.setItem('musicClicker_save', JSON.stringify(saveData));
+    }
 
     function loadGame() {
-        const rawData = localStorage.getItem('musicClicker_saveData');
-        if (rawData) {
+        let raw = localStorage.getItem('musicClicker_save');
+        if(raw) {
             try {
-                const parsed = JSON.parse(rawData);
-                if (parsed.state) state = { ...state, ...parsed.state };
-                if (parsed.clickingUpgrades) clickingUpgrades = parsed.clickingUpgrades;
-                if (parsed.backgroundTracks) backgroundTracks = parsed.backgroundTracks;
-            } catch(e) {
-                console.error("Failed loading saved data", e);
-            }
+                let parsed = JSON.parse(raw);
+                if(parsed.state) state = parsed.state;
+                if(parsed.clickingUpgrades) {
+                    parsed.clickingUpgrades.forEach(saved => {
+                        let original = clickingUpgrades.find(u => u.id === saved.id);
+                        if(original) { original.owned = saved.owned; original.cost = saved.cost; }
+                    });
+                }
+                if(parsed.backgroundTracks) {
+                    parsed.backgroundTracks.forEach(saved => {
+                        let original = backgroundTracks.find(t => t.id === saved.id);
+                        if(original) { original.owned = saved.owned; original.cost = saved.cost; }
+                    });
+                }
+                if(parsed.achievements) {
+                    parsed.achievements.forEach(saved => {
+                        let original = achievements.find(a => a.id === saved.id);
+                        if(original) original.unlocked = saved.unlocked;
+                    });
+                }
+            } catch(e) { console.error("Error loading save file data: ", e); }
         }
     }
 
-    // Secret Input Matrix Systems
+    saveBtn.addEventListener('click', () => {
+        saveGame();
+        alert("Game saved to local browser data successfully!");
+    });
+
+    // Cheats Panel System
     submitCodeBtn.addEventListener('click', () => {
         const code = secretCodeInput.value.trim();
-        const lowerCode = code.toLowerCase();
-        
-        if (lowerCode === 'freebeats') {
+        if(code === 'freebeats') {
             state.beats += 5000;
             alert('Code accepted! Added 5,000 beats.');
-        } else if (lowerCode === 'm4tr1x') {
-            cheats.matrixActive = true;
-            cheats.bonusBPC += 500;
-            document.body.classList.add('matrix-mode');
-            canvas.style.display = 'block';
-            resizeCanvas();
-            alert('Matrix grid overrides accepted. Visual streaming initialized +500 BPC.');
-        } else if (code === 'ACXx!11111') {
-            cheats.bonusBPC += 50000000;
-            cheats.bonusBPS += 1000000000;
-            alert('God mode sequence injected! +50M BPC and +1B BPS.');
-        } else if (code === 'M34(!)') {
-            cheats.bonusBPC += 999999999999;
-            cheats.bonusBPS += 999999999999;
-            alert('Ultimate Reality Tear Activated! +999,999,999,999 BPC & BPS.');
+        } else if(code === 'm4tr1x') {
+            cheats.active = true;
+            cheats.matrixRain = true;
+            gameContainer.classList.add('matrix-mode');
+            document.getElementById('matrixCanvas').style.display = 'block';
+            startMatrixRain();
+            alert('The Matrix has loaded... Code interface initialized.');
+        } else if(code === 'ACXx!11111') {
+            cheats.active = true;
+            cheats.bpc_inject += 50000000;
+            cheats.bps_inject += 1000000000;
+            alert('God-Tier Cheat Injected: +50M BPC, +1B BPS!');
+        } else if(code === 'M34(!)') {
+            cheats.active = true;
+            cheats.bpc_inject += 999999999999;
+            cheats.bps_inject += 999999999999;
+            alert('Reality Collapsed: +999.9B BPC & BPS Injected!');
         } else {
-            alert('Invalid encryption entry code.');
+            alert('Invalid secret code format.');
         }
         secretCodeInput.value = '';
         updateUI();
     });
 
-    secretCodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') submitCodeBtn.click();
-    });
-
-    // Reality Reset Engine
-    backToRealityBtn.addEventListener('click', () => {
-        cheats.matrixActive = false;
-        cheats.bonusBPC = 0;
-        cheats.bonusBPS = 0;
-        document.body.classList.remove('matrix-mode');
-        canvas.style.display = 'none';
+    realityBtn.addEventListener('click', () => {
+        cheats.active = false;
+        cheats.matrixRain = false;
+        cheats.bpc_inject = 0;
+        cheats.bps_inject = 0;
+        gameContainer.classList.remove('matrix-mode');
+        document.getElementById('matrixCanvas').style.display = 'none';
         updateUI();
-        alert('Visual anomalies terminated. Alternate cheat parameters cleared. Legitimate progress sustained.');
+        alert('Back to normal reality. Cheat modifications disabled.');
     });
 
-    // Matrix Rain Visual Canvas Backdrop Rendering logic
-    let columns = [];
-    const fontSize = 16;
-    
-    function resizeCanvas() {
+    // Matrix Rain Effect Core
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    let matrixInterval = null;
+
+    function startMatrixRain() {
+        if(matrixInterval) clearInterval(matrixInterval);
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        const numCols = Math.floor(canvas.width / fontSize);
-        columns = [];
-        for (let i = 0; i < numCols; i++) {
-            columns.push(Math.random() * -100);
+
+        const katakana = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=<>!%";
+        const alphabet = katakana.split("");
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = [];
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
         }
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(18, 18, 18, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+        matrixInterval = setInterval(draw, 30);
     }
+
     window.addEventListener('resize', () => {
-        if(cheats.matrixActive) resizeCanvas();
+        if(cheats.matrixRain) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
     });
 
-    function drawMatrixRain() {
-        if (!cheats.matrixActive) {
-            requestAnimationFrame(drawMatrixRain);
-            return;
-        }
-        ctx.fillStyle = 'rgba(18, 18, 18, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = '#00ff00';
-        ctx.font = fontSize + 'px monospace';
-
-        for (let i = 0; i < columns.length; i++) {
-            const char = String.fromCharCode(33 + Math.floor(Math.random() * 93));
-            const x = i * fontSize;
-            const y = columns[i] * fontSize;
-
-            ctx.fillText(char, x, y);
-
-            if (y > canvas.height && Math.random() > 0.975) {
-                columns[i] = 0;
-            }
-            columns[i]++;
-        }
-        requestAnimationFrame(drawMatrixRain);
-    }
-    requestAnimationFrame(drawMatrixRain);
-
-    // Idle Production Clock loop execution interval
+    // Idle Generation Matrix Loop
     setInterval(() => {
-        const currentBPS = getCalculatedBPS();
+        let mult = getMultiplier();
+        let currentBPS = (computeBaseBPS() * mult) + cheats.bps_inject;
         if (currentBPS > 0) {
-            state.beats += (currentBPS / 10);
+            state.beats += currentBPS;
             updateUI();
         }
-    }, 100);
+    }, 1000);
 
     initUI();
 </script>
