@@ -14,12 +14,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            display: none;
         }
 
         .container {
             max-width: 800px;
             width: 100%;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         h1 {
@@ -28,11 +42,13 @@
         }
 
         .stats-panel {
-            background-color: #1e1e1e;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(5px);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .stat {
@@ -81,8 +97,9 @@
         }
 
         .card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             padding: 15px;
             text-align: left;
@@ -127,7 +144,8 @@
         }
 
         .achievements-panel {
-            background-color: #1a1a2e;
+            background-color: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(5px);
             border: 1px solid #00f0ff;
             border-radius: 10px;
             padding: 15px;
@@ -146,7 +164,7 @@
         .achievement-item {
             padding: 10px;
             border-radius: 6px;
-            background-color: #111;
+            background-color: rgba(17, 17, 17, 0.9);
             border-left: 4px solid #555;
             display: flex;
             justify-content: space-between;
@@ -155,7 +173,7 @@
 
         .achievement-item.unlocked {
             border-left-color: #00f0ff;
-            background-color: #16222f;
+            background-color: rgba(22, 34, 47, 0.9);
         }
 
         .achievement-status {
@@ -172,8 +190,10 @@
             margin-top: 40px;
             margin-bottom: 40px;
             padding: 15px;
-            background-color: #1e1e1e;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(5px);
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .secret-code-section input {
@@ -207,6 +227,8 @@
 </head>
 <body>
 
+<canvas id="matrixCanvas"></canvas>
+
 <div class="container">
     <h1>🎵 Beat Clicker 🎵</h1>
 
@@ -239,6 +261,7 @@
 </div>
 
 <script>
+    // Game State
     let state = {
         beats: 0,
         bpc: 1,
@@ -246,6 +269,7 @@
         totalTracksBought: 0
     };
 
+    // Upgrades Configuration
     const clickingUpgrades = [
         { id: 'bpc_1', name: 'Heavy Drumsticks', effect: 1, cost: 10, owned: 0 },
         { id: 'bpc_2', name: 'Amplified Mouse', effect: 5, cost: 80, owned: 0 },
@@ -285,6 +309,7 @@
         { id: 'ach_5', name: 'Click Elite', desc: 'Reach 50 Beats Per Click (BPC)', unlocked: false, condition: () => state.bpc >= 50 }
     ];
 
+    // DOM Elements
     const scoreEl = document.getElementById('score');
     const bpcEl = document.getElementById('bpc');
     const bpsEl = document.getElementById('bps');
@@ -294,11 +319,62 @@
     const achievementsListContainer = document.getElementById('achievementsList');
     const secretCodeInput = document.getElementById('secretCode');
     const submitCodeBtn = document.getElementById('submitCode');
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
 
+    // Matrix Digital Rain Setup
+    let matrixInterval = null;
+    function startMatrixRain() {
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890';
+        const alphabet = katakana.split('');
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = [];
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+
+        if (matrixInterval) clearInterval(matrixInterval);
+        matrixInterval = setInterval(draw, 30);
+    }
+
+    window.addEventListener('resize', () => {
+        if (canvas.style.display === 'block') {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+    });
+
+    // Format numbers dynamically
     function formatNum(num) {
         return num.toLocaleString();
     }
 
+    // Initialize/Render Upgrades layout
     function initUI() {
         clickingUpgradesContainer.innerHTML = clickingUpgrades.map((upg, idx) => `
             <div class="card" id="card-${upg.id}">
@@ -345,21 +421,17 @@
         clickingUpgrades.forEach(upg => {
             const btn = document.getElementById(`btn-${upg.id}`);
             const ownedEl = document.getElementById(`owned-${upg.id}`);
-            if(ownedEl) ownedEl.innerText = upg.owned;
-            if(btn) {
-                btn.innerText = `Cost: ${formatNum(upg.cost)}`;
-                btn.disabled = state.beats < upg.cost;
-            }
+            ownedEl.innerText = upg.owned;
+            btn.innerText = `Cost: ${formatNum(upg.cost)}`;
+            btn.disabled = state.beats < upg.cost;
         });
 
         backgroundTracks.forEach(track => {
             const btn = document.getElementById(`btn-${track.id}`);
             const ownedEl = document.getElementById(`owned-${track.id}`);
-            if(ownedEl) ownedEl.innerText = track.owned;
-            if(btn) {
-                btn.innerText = `Cost: ${formatNum(track.cost)}`;
-                btn.disabled = state.beats < track.cost;
-            }
+            ownedEl.innerText = track.owned;
+            btn.innerText = `Cost: ${formatNum(track.cost)}`;
+            btn.disabled = state.beats < track.cost;
         });
 
         checkAchievements();
@@ -407,10 +479,20 @@
     };
 
     submitCodeBtn.addEventListener('click', () => {
-        const code = secretCodeInput.value.trim().toLowerCase();
-        if(code === 'freebeats') {
+        const code = secretCodeInput.value.trim();
+        const codeLower = code.toLowerCase();
+        
+        if (codeLower === 'freebeats') {
             state.beats += 5000;
             alert('Code accepted! Added 5,000 beats.');
+        } else if (codeLower === 'm4tr1x') {
+            state.bpc += 500;
+            startMatrixRain();
+            alert('Matrix Overdrive Initialized! +500 BPC and code rain unlocked.');
+        } else if (code === 'ACXx!11111') {
+            state.bpc += 50000000;
+            state.bps += 1000000000;
+            alert('GOD MODE ACTIVATED! Added 50,000,000 BPC and 1,000,000,000 BPS.');
         } else {
             alert('Invalid secret code.');
         }
@@ -431,5 +513,6 @@
 
     initUI();
 </script>
+
 </body>
 </html>
