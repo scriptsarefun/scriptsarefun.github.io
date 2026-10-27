@@ -186,39 +186,44 @@
         <div class="panel">
             <h3>Buy & Unlock Clicking Upgrades</h3>
             <div class="upgrade-item">
-                <div>
-                    <strong>Heavy Drumsticks</strong><br>
-                    <small>Gives +1 BPC | Owned: <span id="count-c1">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-c1" onclick="buyHeavyDrumsticks()">Cost: 10</button>
+                <div><strong>Heavy Drumsticks</strong><br><small>Gives +1 BPC | Owned: <span id="count-c1">0</span></small></div>
+                <button class="buy-btn" id="btn-c1" onclick="buyClick(1, 1)">Cost: 10</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Amplified Mouse</strong><br>
-                    <small>Gives +5 BPC | Owned: <span id="count-c2">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-c2" onclick="buyAmplifiedMouse()">Cost: 80</button>
+                <div><strong>Amplified Mouse</strong><br><small>Gives +5 BPC | Owned: <span id="count-c2">0</span></small></div>
+                <button class="buy-btn" id="btn-c2" onclick="buyClick(2, 5)">Cost: 80</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Macro Beat Generator</strong><br>
-                    <small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-c3" onclick="buyMacroGenerator()">Cost: 400</button>
+                <div><strong>Macro Beat Generator</strong><br><small>Gives +20 BPC | Owned: <span id="count-c3">0</span></small></div>
+                <button class="buy-btn" id="btn-c3" onclick="buyClick(3, 20)">Cost: 400</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Quantum Tap Engine</strong><br>
-                    <small>Gives +100 BPC | Owned: <span id="count-c4">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-c4" onclick="buyQuantumEngine()">Cost: 2500</button>
+                <div><strong>Quantum Tap Engine</strong><br><small>Gives +100 BPC | Owned: <span id="count-c4">0</span></small></div>
+                <button class="buy-btn" id="btn-c4" onclick="buyClick(4, 100)">Cost: 2500</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Singularity Clicker</strong><br>
-                    <small>Gives +500 BPC | Owned: <span id="count-c5">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-c5" onclick="buySingularityClicker()">Cost: 15000</button>
+                <div><strong>Singularity Clicker</strong><br><small>Gives +500 BPC | Owned: <span id="count-c5">0</span></small></div>
+                <button class="buy-btn" id="btn-c5" onclick="buyClick(5, 500)">Cost: 15000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Cosmic Tap Catalyst</strong><br><small>Gives +2500 BPC | Owned: <span id="count-c6">0</span></small></div>
+                <button class="buy-btn" id="btn-c6" onclick="buyClick(6, 2500)">Cost: 90000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Dimensional Rhythm Warp</strong><br><small>Gives +10000 BPC | Owned: <span id="count-c7">0</span></small></div>
+                <button class="buy-btn" id="btn-c7" onclick="buyClick(7, 10000)">Cost: 550000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Chrono Beat Fracturer</strong><br><small>Gives +50000 BPC | Owned: <span id="count-c8">0</span></small></div>
+                <button class="buy-btn" id="btn-c8" onclick="buyClick(8, 50000)">Cost: 3500000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Dark Matter Pulsator</strong><br><small>Gives +250000 BPC | Owned: <span id="count-c9">0</span></small></div>
+                <button class="buy-btn" id="btn-c9" onclick="buyClick(9, 250000)">Cost: 24000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Infinity Drum</strong><br><small>Gives +1000000 BPC | Owned: <span id="count-c10">0</span></small></div>
+                <button class="buy-btn" id="btn-c10" onclick="buyClick(10, 1000000)">Cost: 180000000</button>
             </div>
         </div>
 
@@ -226,74 +231,64 @@
         <div class="panel">
             <h3>Buy & Unlock Background Tracks</h3>
             <div class="upgrade-item">
-                <div>
-                    <strong>Upbeat Synth Theme</strong><br>
-                    <small>Gives +1 BPS | Owned: <span id="count-p1">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p1" onclick="buySynthTheme()">Cost: 15</button>
+                <div>role="text" <strong>Upbeat Synth Theme</strong><br><small>Gives +1 BPS | Owned: <span id="count-p1">0</span></small></div>
+                <button class="buy-btn" id="btn-p1" onclick="buyPassive(1, 1)">Cost: 15</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Acoustic Funk Groove</strong><br>
-                    <small>Gives +5 BPS | Owned: <span id="count-p2">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p2" onclick="buyFunkGroove()">Cost: 100</button>
+                <div><strong>Acoustic Funk Groove</strong><br><small>Gives +5 BPS | Owned: <span id="count-p2">0</span></small></div>
+                <button class="buy-btn" id="btn-p2" onclick="buyPassive(2, 5)">Cost: 100</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Club Techno Pulse</strong><br>
-                    <small>Gives +25 BPS | Owned: <span id="count-p3">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p3" onclick="buyTechnoPulse()">Cost: 500</button>
+                <div><strong>Club Techno Pulse</strong><br><small>Gives +25 BPS | Owned: <span id="count-p3">0</span></small></div>
+                <button class="buy-btn" id="btn-p3" onclick="buyPassive(3, 25)">Cost: 500</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Fast Breakbeat Energy</strong><br>
-                    <small>Gives +100 BPS | Owned: <span id="count-p4">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p4" onclick="buyBreakbeatEnergy()">Cost: 3000</button>
+                <div><strong>Fast Breakbeat Energy</strong><br><small>Gives +100 BPS | Owned: <span id="count-p4">0</span></small></div>
+                <button class="buy-btn" id="btn-p4" onclick="buyPassive(4, 100)">Cost: 3000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Cyber Arpeggio Overdrive</strong><br>
-                    <small>Gives +500 BPS | Owned: <span id="count-p5">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p5" onclick="buyCyberOverdrive()">Cost: 10000</button>
+                <div><strong>Cyber Arpeggio Overdrive</strong><br><small>Gives +500 BPS | Owned: <span id="count-p5">0</span></small></div>
+                <button class="buy-btn" id="btn-p5" onclick="buyPassive(5, 500)">Cost: 10000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Hypersonic Remix</strong><br>
-                    <small>Gives +2500 BPS | Owned: <span id="count-p6">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p6" onclick="buyHypersonicRemix()">Cost: 60000</button>
+                <div><strong>Hypersonic Remix</strong><br><small>Gives +2500 BPS | Owned: <span id="count-p6">0</span></small></div>
+                <button class="buy-btn" id="btn-p6" onclick="buyPassive(6, 2500)">Cost: 60000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Galactic Symphony</strong><br>
-                    <small>Gives +10000 BPS | Owned: <span id="count-p7">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p7" onclick="buyGalacticSymphony()">Cost: 350000</button>
+                <div><strong>Galactic Symphony</strong><br><small>Gives +10000 BPS | Owned: <span id="count-p7">0</span></small></div>
+                <button class="buy-btn" id="btn-p7" onclick="buyPassive(7, 10000)">Cost: 350000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Time-Warp Continuum</strong><br>
-                    <small>Gives +50000 BPS | Owned: <span id="count-p8">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p8" onclick="buyTimeWarp()">Cost: 2000000</button>
+                <div><strong>Time-Warp Continuum</strong><br><small>Gives +50000 BPS | Owned: <span id="count-p8">0</span></small></div>
+                <button class="buy-btn" id="btn-p8" onclick="buyPassive(8, 50000)">Cost: 2000000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Multiverse Bassline</strong><br>
-                    <small>Gives +250000 BPS | Owned: <span id="count-p9">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p9" onclick="buyMultiverseBassline()">Cost: 15000000</button>
+                <div><strong>Multiverse Bassline</strong><br><small>Gives +250000 BPS | Owned: <span id="count-p9">0</span></small></div>
+                <button class="buy-btn" id="btn-p9" onclick="buyPassive(9, 250000)">Cost: 15000000</button>
             </div>
             <div class="upgrade-item">
-                <div>
-                    <strong>Omniverse Masterpiece</strong><br>
-                    <small>Gives +1000000 BPS | Owned: <span id="count-p10">0</span></small>
-                </div>
-                <button class="buy-btn" id="btn-p10" onclick="buyOmniverseMasterpiece()">Cost: 100000000</button>
+                <div><strong>Omniverse Masterpiece</strong><br><small>Gives +1000000 BPS | Owned: <span id="count-p10">0</span></small></div>
+                <button class="buy-btn" id="btn-p10" onclick="buyPassive(10, 1000000)">Cost: 100000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Astral Harmony</strong><br><small>Gives +5000000 BPS | Owned: <span id="count-p11">0</span></small></div>
+                <button class="buy-btn" id="btn-p11" onclick="buyPassive(11, 5000000)">Cost: 750000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Supernova Baseline</strong><br><small>Gives +25000000 BPS | Owned: <span id="count-p12">0</span></small></div>
+                <button class="buy-btn" id="btn-p12" onclick="buyPassive(12, 25000000)">Cost: 4000000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Infinity Symphony</strong><br><small>Gives +100000000 BPS | Owned: <span id="count-p13">0</span></small></div>
+                <button class="buy-btn" id="btn-p13" onclick="buyPassive(13, 100000000)">Cost: 25000000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Reality Tear Remix</strong><br><small>Gives +500000000 BPS | Owned: <span id="count-p14">0</span></small></div>
+                <button class="buy-btn" id="btn-p14" onclick="buyPassive(14, 500000000)">Cost: 150000000000</button>
+            </div>
+            <div class="upgrade-item">
+                <div><strong>Cosmic Overlord Anthem</strong><br><small>Gives +2500000000 BPS | Owned: <span id="count-p15">0</span></small></div>
+                <button class="buy-btn" id="btn-p15" onclick="buyPassive(15, 2500000000)">Cost: 1000000000000</button>
             </div>
         </div>
 
@@ -313,61 +308,40 @@
         var beatsPerClick = 1;
         var beatsPerSecond = 0;
 
-        var countC1 = 0; var costC1 = 10;
-        var countC2 = 0; var costC2 = 80;
-        var countC3 = 0; var costC3 = 400;
-        var countC4 = 0; var costC4 = 2500;
-        var countC5 = 0; var costC5 = 15000;
+        var clickUpgrades = {
+            1: { count: 0, cost: 10 }, 2: { count: 0, cost: 80 }, 3: { count: 0, cost: 400 },
+            4: { count: 0, cost: 2500 }, 5: { count: 0, cost: 15000 }, 6: { count: 0, cost: 90000 },
+            7: { count: 0, cost: 550000 }, 8: { count: 0, cost: 3500000 }, 9: { count: 0, cost: 24000000 },
+            10: { count: 0, cost: 180000000 }
+        };
 
-        var countP1 = 0; var costP1 = 15;
-        var countP2 = 0; var costP2 = 100;
-        var countP3 = 0; var costP3 = 500;
-        var countP4 = 0; var costP4 = 3000;
-        var countP5 = 0; var costP5 = 10000;
-        var countP6 = 0; var costP6 = 60000;
-        var countP7 = 0; var costP7 = 350000;
-        var countP8 = 0; var costP8 = 2000000;
-        var countP9 = 0; var costP9 = 15000000;
-        var countP10 = 0; var costP10 = 100000000;
+        var passiveUpgrades = {
+            1: { count: 0, cost: 15 }, 2: { count: 0, cost: 100 }, 3: { count: 0, cost: 500 },
+            4: { count: 0, cost: 3000 }, 5: { count: 0, cost: 10000 }, 6: { count: 0, cost: 60000 },
+            7: { count: 0, cost: 350000 }, 8: { count: 0, cost: 2000000 }, 9: { count: 0, cost: 15000000 },
+            10: { count: 0, cost: 100000000 }, 11: { count: 0, cost: 750000000 }, 12: { count: 0, cost: 4000000000 },
+            13: { count: 0, cost: 25000000000 }, 14: { count: 0, cost: 150000000000 }, 15: { count: 0, cost: 1000000000000 }
+        };
 
         var audioCtx = null;
-
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        function playClickSound() {
+        function playSound(freq, duration, type = 'sine', volume = 0.05) {
             initAudio();
             if (!audioCtx) return;
             let osc = audioCtx.createOscillator();
             let gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            if (type === 'triangle') osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        function playTrackSound() {
-            initAudio();
-            if (!audioCtx || beatsPerSecond === 0) return;
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            osc.type = 'sine';
-            let baseFreq = 220 + (Math.log10(beatsPerSecond) * 50);
-            osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.15);
+            osc.stop(audioCtx.currentTime + duration);
         }
 
         function clickBeats() {
@@ -377,40 +351,41 @@
             } else if (document.body.classList.contains('hyperdrive-mode')) {
                 currentBPC = 50000;
             }
-            score = score + currentBPC;
-            playClickSound();
+            score += currentBPC;
+            playSound(150, 0.1, 'triangle', 0.3);
             updateUI();
         }
 
-        function buyHeavyDrumsticks() { if (score >= costC1) { score -= costC1; countC1++; beatsPerClick += 1; costC1 = Math.floor(costC1 * 1.15); updateUI(); } }
-        function buyAmplifiedMouse() { if (score >= costC2) { score -= costC2; countC2++; beatsPerClick += 5; costC2 = Math.floor(costC2 * 1.15); updateUI(); } }
-        function buyMacroGenerator() { if (score >= costC3) { score -= costC3; countC3++; beatsPerClick += 20; costC3 = Math.floor(costC3 * 1.15); updateUI(); } }
-        function buyQuantumEngine() { if (score >= costC4) { score -= costC4; countC4++; beatsPerClick += 100; costC4 = Math.floor(costC4 * 1.15); updateUI(); } }
-        function buySingularityClicker() { if (score >= costC5) { score -= costC5; countC5++; beatsPerClick += 500; costC5 = Math.floor(costC5 * 1.15); updateUI(); } }
-
-        function buySynthTheme() { if (score >= costP1) { score -= costP1; countP1++; beatsPerSecond += 1; costP1 = Math.floor(costP1 * 1.15); updateUI(); } }
-        function buyFunkGroove() { if (score >= costP2) { score -= costP2; countP2++; beatsPerSecond += 5; costP2 = Math.floor(costP2 * 1.15); updateUI(); } }
-        function buyTechnoPulse() { if (score >= costP3) { score -= costP3; countP3++; beatsPerSecond += 25; costP3 = Math.floor(costP3 * 1.15); updateUI(); } }
-        function buyBreakbeatEnergy() { if (score >= costP4) { score -= costP4; countP4++; beatsPerSecond += 100; costP4 = Math.floor(costP4 * 1.15); updateUI(); } }
-        function buyCyberOverdrive() { if (score >= costP5) { score -= costP5; countP5++; beatsPerSecond += 500; costP5 = Math.floor(costP5 * 1.15); updateUI(); } }
-        function buyHypersonicRemix() { if (score >= costP6) { score -= costP6; countP6++; beatsPerSecond += 2500; costP6 = Math.floor(costP6 * 1.15); updateUI(); } }
-        function buyGalacticSymphony() { if (score >= costP7) { score -= costP7; countP7++; beatsPerSecond += 10000; costP7 = Math.floor(costP7 * 1.15); updateUI(); } }
-        function buyTimeWarp() { if (score >= costP8) { score -= costP8; countP8++; beatsPerSecond += 50000; costP8 = Math.floor(costP8 * 1.15); updateUI(); } }
-        function buyMultiverseBassline() { if (score >= costP9) { score -= costP9; countP9++; beatsPerSecond += 250000; costP9 = Math.floor(costP9 * 1.15); updateUI(); } }
-        function buyOmniverseMasterpiece() { if (score >= costP10) { score -= costP10; countP10++; beatsPerSecond += 1000000; costP10 = Math.floor(costP10 * 1.15); updateUI(); } }
-
-        function checkCode() {
-            var input = document.getElementById('matrix-code').value.trim();
-            if (input === '999') {
-                enterMatrixMode();
-            } else if (input === '999555') {
-                enterHyperdriveMode();
+        function buyClick(id, amount) {
+            let up = clickUpgrades[id];
+            if (score >= up.cost) {
+                score -= up.cost;
+                up.count++;
+                beatsPerClick += amount;
+                up.cost = Math.floor(up.cost * 1.15);
+                updateUI();
             }
         }
 
+        function buyPassive(id, amount) {
+            let up = passiveUpgrades[id];
+            if (score >= up.cost) {
+                score -= up.cost;
+                up.count++;
+                beatsPerSecond += amount;
+                up.cost = Math.floor(up.cost * 1.15);
+                updateUI();
+            }
+        }
+
+        function checkCode() {
+            var input = document.getElementById('matrix-code').value.trim();
+            if (input === '999') enterMatrixMode();
+            else if (input === '999555') enterHyperdriveMode();
+        }
+
         function enterMatrixMode() {
-            document.body.classList.remove('hyperdrive-mode');
-            document.body.classList.add('matrix-mode');
+            document.body.className = 'matrix-mode';
             document.getElementById('game-title').innerText = "⚡ THE MATRIX MANIAC ⚡";
             document.getElementById('click-trigger').innerText = "TAP THE CODE";
             document.getElementById('secret-section').style.display = 'none';
@@ -420,8 +395,7 @@
         }
 
         function enterHyperdriveMode() {
-            document.body.classList.remove('matrix-mode');
-            document.body.classList.add('hyperdrive-mode');
+            document.body.className = 'hyperdrive-mode';
             document.getElementById('game-title').innerText = "🚀 HYPERDRIVE OVERLOAD 🚀";
             document.getElementById('click-trigger').innerText = "⚡ INFINITE POWER ⚡";
             document.getElementById('secret-section').style.display = 'none';
@@ -431,8 +405,7 @@
         }
 
         function exitSpecialModes() {
-            document.body.classList.remove('matrix-mode');
-            document.body.classList.remove('hyperdrive-mode');
+            document.body.className = '';
             document.getElementById('game-title').innerText = "🎵 Beat Clicker 🎵";
             document.getElementById('click-trigger').innerText = "DROP THE BEAT!";
             document.getElementById('secret-section').style.display = 'block';
@@ -445,34 +418,27 @@
             document.getElementById('bps-display').innerText = beatsPerSecond;
             
             var displayBPC = beatsPerClick;
-            if (document.body.classList.contains('matrix-mode')) {
-                displayBPC = beatsPerClick * 10;
-            } else if (document.body.classList.contains('hyperdrive-mode')) {
-                displayBPC = 50000;
-            }
+            if (document.body.classList.contains('matrix-mode')) displayBPC = beatsPerClick * 10;
+            else if (document.body.classList.contains('hyperdrive-mode')) displayBPC = 50000;
             document.getElementById('bpc-display').innerText = displayBPC;
 
-            for (let i = 1; i <= 5; i++) {
-                let count = window['countC' + i];
-                let cost = window['costC' + i];
-                document.getElementById('count-c' + i).innerText = count;
-                document.getElementById('btn-c' + i).innerText = 'Cost: ' + cost;
-                document.getElementById('btn-c' + i).disabled = (score < cost);
+            for (let i in clickUpgrades) {
+                document.getElementById('count-c' + i).innerText = clickUpgrades[i].count;
+                document.getElementById('btn-c' + i).innerText = 'Cost: ' + clickUpgrades[i].cost;
+                document.getElementById('btn-c' + i).disabled = (score < clickUpgrades[i].cost);
             }
-
-            for (let i = 1; i <= 10; i++) {
-                let count = window['countP' + i];
-                let cost = window['costP' + i];
-                document.getElementById('count-p' + i).innerText = count;
-                document.getElementById('btn-p' + i).innerText = 'Cost: ' + cost;
-                document.getElementById('btn-p' + i).disabled = (score < cost);
+            for (let i in passiveUpgrades) {
+                document.getElementById('count-p' + i).innerText = passiveUpgrades[i].count;
+                document.getElementById('btn-p' + i).innerText = 'Cost: ' + passiveUpgrades[i].cost;
+                document.getElementById('btn-p' + i).disabled = (score < passiveUpgrades[i].cost);
             }
         }
 
         setInterval(function() {
-            score = score + beatsPerSecond;
+            score += beatsPerSecond;
             if (beatsPerSecond > 0) {
-                playTrackSound();
+                let freq = 220 + (Math.log10(beatsPerSecond) * 50);
+                playSound(freq, 0.15, 'sine', 0.05);
             }
             updateUI();
         }, 1000);
