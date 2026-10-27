@@ -123,19 +123,38 @@
             color: #555;
             border: none;
         }
-        .secret-input {
+        .secret-container {
             margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .secret-input {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #444;
             background: #222;
             color: #fff;
             text-align: center;
+            width: 150px;
         }
         .hyperdrive-mode .secret-input {
             border-color: #ff007f;
             background: #1a0529;
             color: #00ffff;
+        }
+        .submit-btn {
+            background-color: #0f3460;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hyperdrive-mode .submit-btn {
+            background: #ff007f;
+            color: white;
         }
         .back-btn {
             display: none;
@@ -152,9 +171,6 @@
             color: white;
             box-shadow: 0 0 10px #ff007f;
         }
-        .audio-controls {
-            margin-top: 15px;
-        }
     </style>
 </head>
 <body>
@@ -165,10 +181,6 @@
         <div style="margin-bottom: 20px;">Beats Per Second (BPS): <span id="bps-display">0</span></div>
 
         <button class="click-btn" id="click-trigger" onclick="clickBeats()">DROP THE BEAT!</button>
-        
-        <div class="audio-controls">
-            <button class="buy-btn" id="mute-btn" onclick="toggleMute()">Mute Audio</button>
-        </div>
 
         <!-- CLICKING UPGRADES -->
         <div class="panel">
@@ -286,8 +298,11 @@
         </div>
 
         <div id="secret-section">
-            <p>Enter Secret Code:</p>
-            <input type="text" id="matrix-code" class="secret-input" placeholder="???" oninput="checkCode()">
+            <p>Enter Secret Code (Press Enter or click Submit):</p>
+            <div class="secret-container">
+                <input type="text" id="matrix-code" class="secret-input" placeholder="???" onkeydown="if(event.key==='Enter') checkCode()">
+                <button class="submit-btn" onclick="checkCode()">Submit</button>
+            </div>
         </div>
 
         <button id="back-button" class="back-btn" onclick="exitSpecialModes()">⬅ Go Back to Reality</button>
@@ -315,239 +330,74 @@
         var countP9 = 0; var costP9 = 15000000;
         var countP10 = 0; var costP10 = 100000000;
 
-        // Sound Synthesis Setup
         var audioCtx = null;
-        var isMuted = false;
-        var activeNodes = [];
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                startBackgroundMusic();
             }
         }
 
         function playClickSound() {
-            if (isMuted) return;
             initAudio();
             if (!audioCtx) return;
-
             let osc = audioCtx.createOscillator();
             let gain = audioCtx.createGain();
-            
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(150, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            
             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        function startBackgroundMusic() {
-            if (!audioCtx || isMuted) return;
-            // Simple synthesized beep beat loop
-            setInterval(() => {
-                if (beatsPerSecond > 0 && !isMuted) {
-                    let osc = audioCtx.createOscillator();
-                    let gain = audioCtx.createGain();
-                    let speedFactor = Math.min(beatsPerSecond / 10, 1000);
-                    
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(300 + speedFactor, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-                    
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.1);
-                }
-            }, 1000);
-        }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('mute-btn').innerText = isMuted ? "Unmute Audio" : "Mute Audio";
+        function playTrackSound() {
+            initAudio();
+            if (!audioCtx || beatsPerSecond === 0) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
+            let baseFreq = 220 + (Math.log10(beatsPerSecond) * 50);
+            osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
         }
 
         function clickBeats() {
-            playClickSound();
             var currentBPC = beatsPerClick;
-            
             if (document.body.classList.contains('matrix-mode')) {
                 currentBPC = beatsPerClick * 10;
             } else if (document.body.classList.contains('hyperdrive-mode')) {
                 currentBPC = 50000;
             }
-            
             score = score + currentBPC;
+            playClickSound();
             updateUI();
         }
 
-        function buyHeavyDrumsticks() {
-            if (score >= costC1) {
-                score = score - costC1;
-                countC1 = countC1 + 1;
-                beatsPerClick = beatsPerClick + 1;
-                costC1 = Math.floor(costC1 * 1.15);
-                updateUI();
-            }
-        }
+        function buyHeavyDrumsticks() { if (score >= costC1) { score -= costC1; countC1++; beatsPerClick += 1; costC1 = Math.floor(costC1 * 1.15); updateUI(); } }
+        function buyAmplifiedMouse() { if (score >= costC2) { score -= costC2; countC2++; beatsPerClick += 5; costC2 = Math.floor(costC2 * 1.15); updateUI(); } }
+        function buyMacroGenerator() { if (score >= costC3) { score -= costC3; countC3++; beatsPerClick += 20; costC3 = Math.floor(costC3 * 1.15); updateUI(); } }
+        function buyQuantumEngine() { if (score >= costC4) { score -= costC4; countC4++; beatsPerClick += 100; costC4 = Math.floor(costC4 * 1.15); updateUI(); } }
+        function buySingularityClicker() { if (score >= costC5) { score -= costC5; countC5++; beatsPerClick += 500; costC5 = Math.floor(costC5 * 1.15); updateUI(); } }
 
-        function buyAmplifiedMouse() {
-            if (score >= costC2) {
-                score = score - costC2;
-                countC2 = countC2 + 1;
-                beatsPerClick = beatsPerClick + 5;
-                costC2 = Math.floor(costC2 * 1.15);
-                updateUI();
-            }
-        }
-
-        function buyMacroGenerator() {
-            if (score >= costC3) {
-                score = score - costC3;
-                countC3 = countC3 + 1;
-                beatsPerClick = beatsPerClick + 20;
-                costC3 = Math.floor(costC3 * 1.15);
-                updateUI();
-            }
-        }
-
-        function buyQuantumEngine() {
-            if (score >= costC4) {
-                score = score - costC4;
-                countC4 = countC4 + 1;
-                beatsPerClick = beatsPerClick + 100;
-                costC4 = Math.floor(costC4 * 1.15);
-                updateUI();
-            }
-        }
-
-        function buySingularityClicker() {
-            if (score >= costC5) {
-                score = score - costC5;
-                countC5 = countC5 + 1;
-                beatsPerClick = beatsPerClick + 500;
-                costC5 = Math.floor(costC5 * 1.15);
-                updateUI();
-            }
-        }
-
-        function buySynthTheme() {
-            if (score >= costP1) {
-                score = score - costP1;
-                countP1 = countP1 + 1;
-                beatsPerSecond = beatsPerSecond + 1;
-                costP1 = Math.floor(costP1 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyFunkGroove() {
-            if (score >= costP2) {
-                score = score - costP2;
-                countP2 = countP2 + 1;
-                beatsPerSecond = beatsPerSecond + 5;
-                costP2 = Math.floor(costP2 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyTechnoPulse() {
-            if (score >= costP3) {
-                score = score - costP3;
-                countP3 = countP3 + 1;
-                beatsPerSecond = beatsPerSecond + 25;
-                costP3 = Math.floor(costP3 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyBreakbeatEnergy() {
-            if (score >= costP4) {
-                score = score - costP4;
-                countP4 = countP4 + 1;
-                beatsPerSecond = beatsPerSecond + 100;
-                costP4 = Math.floor(costP4 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyCyberOverdrive() {
-            if (score >= costP5) {
-                score = score - costP5;
-                countP5 = countP5 + 1;
-                beatsPerSecond = beatsPerSecond + 500;
-                costP5 = Math.floor(costP5 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyHypersonicRemix() {
-            if (score >= costP6) {
-                score = score - costP6;
-                countP6 = countP6 + 1;
-                beatsPerSecond = beatsPerSecond + 2500;
-                costP6 = Math.floor(costP6 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyGalacticSymphony() {
-            if (score >= costP7) {
-                score = score - costP7;
-                countP7 = countP7 + 1;
-                beatsPerSecond = beatsPerSecond + 10000;
-                costP7 = Math.floor(costP7 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyTimeWarp() {
-            if (score >= costP8) {
-                score = score - costP8;
-                countP8 = countP8 + 1;
-                beatsPerSecond = beatsPerSecond + 50000;
-                costP8 = Math.floor(costP8 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyMultiverseBassline() {
-            if (score >= costP9) {
-                score = score - costP9;
-                countP9 = countP9 + 1;
-                beatsPerSecond = beatsPerSecond + 250000;
-                costP9 = Math.floor(costP9 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
-
-        function buyOmniverseMasterpiece() {
-            if (score >= costP10) {
-                score = score - costP10;
-                countP10 = countP10 + 1;
-                beatsPerSecond = beatsPerSecond + 1000000;
-                costP10 = Math.floor(costP10 * 1.15);
-                updateUI();
-                initAudio();
-            }
-        }
+        function buySynthTheme() { if (score >= costP1) { score -= costP1; countP1++; beatsPerSecond += 1; costP1 = Math.floor(costP1 * 1.15); updateUI(); } }
+        function buyFunkGroove() { if (score >= costP2) { score -= costP2; countP2++; beatsPerSecond += 5; costP2 = Math.floor(costP2 * 1.15); updateUI(); } }
+        function buyTechnoPulse() { if (score >= costP3) { score -= costP3; countP3++; beatsPerSecond += 25; costP3 = Math.floor(costP3 * 1.15); updateUI(); } }
+        function buyBreakbeatEnergy() { if (score >= costP4) { score -= costP4; countP4++; beatsPerSecond += 100; costP4 = Math.floor(costP4 * 1.15); updateUI(); } }
+        function buyCyberOverdrive() { if (score >= costP5) { score -= costP5; countP5++; beatsPerSecond += 500; costP5 = Math.floor(costP5 * 1.15); updateUI(); } }
+        function buyHypersonicRemix() { if (score >= costP6) { score -= costP6; countP6++; beatsPerSecond += 2500; costP6 = Math.floor(costP6 * 1.15); updateUI(); } }
+        function buyGalacticSymphony() { if (score >= costP7) { score -= costP7; countP7++; beatsPerSecond += 10000; costP7 = Math.floor(costP7 * 1.15); updateUI(); } }
+        function buyTimeWarp() { if (score >= costP8) { score -= costP8; countP8++; beatsPerSecond += 50000; costP8 = Math.floor(costP8 * 1.15); updateUI(); } }
+        function buyMultiverseBassline() { if (score >= costP9) { score -= costP9; countP9++; beatsPerSecond += 250000; costP9 = Math.floor(costP9 * 1.15); updateUI(); } }
+        function buyOmniverseMasterpiece() { if (score >= costP10) { score -= costP10; countP10++; beatsPerSecond += 1000000; costP10 = Math.floor(costP10 * 1.15); updateUI(); } }
 
         function checkCode() {
             var input = document.getElementById('matrix-code').value.trim();
@@ -621,6 +471,9 @@
 
         setInterval(function() {
             score = score + beatsPerSecond;
+            if (beatsPerSecond > 0) {
+                playTrackSound();
+            }
             updateUI();
         }, 1000);
 
