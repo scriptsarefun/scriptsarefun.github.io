@@ -47,6 +47,15 @@
             100% { background-color: #001f24; filter: hue-rotate(360deg); }
         }
 
+        body.mog-overdrive {
+            animation: screenShake 0.15s infinite linear alternate, spaceWarp 3s infinite linear;
+        }
+
+        @keyframes screenShake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(-1px, -2px) rotate(0.5deg); }
+        }
+
         .container {
             max-width: 800px;
             width: 100%;
@@ -62,8 +71,12 @@
             transition: all 0.3s;
         }
 
-        .dino-warp h1, .dino-warp .section-title {
+        .dino-warp h1, .dino-warp .section-title, .mog-overdrive h1, .mog-overdrive .section-title {
             animation: rainbowText 1.5s infinite linear;
+        }
+
+        body.mog-overdrive #score {
+            animation: glitchText 0.2s infinite steps(2);
         }
 
         @keyframes rainbowText {
@@ -71,6 +84,12 @@
             33% { color: #00f0ff; text-shadow: 0 0 15px #00f0ff; }
             66% { color: #ffcc00; text-shadow: 0 0 15px #ffcc00; }
             100% { color: #ff007f; text-shadow: 0 0 15px #ff007f; }
+        }
+
+        @keyframes glitchText {
+            0% { color: #ff007f; text-shadow: 2px 2px #00f0ff, -2px -2px #ffcc00; }
+            50% { color: #00f0ff; text-shadow: -2px 2px #ff007f, 2px -2px #ffcc00; }
+            100% { color: #ffcc00; text-shadow: 2px -2px #00f0ff, -2px 2px #ff007f; }
         }
 
         .stats-panel {
@@ -93,6 +112,7 @@
         .stat {
             font-size: 1.2rem;
             margin: 5px 0;
+            word-wrap: break-word;
         }
 
         #score {
@@ -428,6 +448,7 @@
         matrixActive: false,
         statCheatActive: false,
         dinoActive: false,
+        mogActive: false,
         injectedBpc: 0,
         injectedBps: 0
     };
@@ -558,13 +579,17 @@
 
     function getActiveBpc() {
         let base = state.bpc;
-        if (activeCheats.statCheatActive) base += activeCheats.injectedBpc;
+        if (activeCheats.statCheatActive) {
+            base += activeCheats.injectedBpc;
+        }
         return base * getRebirthMultiplier();
     }
 
     function getActiveBps() {
         let base = state.bps;
-        if (activeCheats.statCheatActive) base += activeCheats.injectedBps;
+        if (activeCheats.statCheatActive) {
+            base += activeCheats.injectedBps;
+        }
         return base * getRebirthMultiplier();
     }
 
@@ -593,7 +618,7 @@
             osc.start();
             osc.stop(audioCtx.currentTime + 0.04);
         } catch (e) {
-            console.error("Audio block delayed.", e);
+            console.error("Audio block blocked.", e);
         }
     }
 
@@ -605,19 +630,19 @@
     initParticleCanvas();
 
     function createClickBurst(x, y) {
-        const count = 12;
-        const colors = ['#ff007f', '#00f0ff', '#7f00ff', '#ffcc00'];
+        const count = activeCheats.mogActive ? 40 : 12;
+        const colors = activeCheats.mogActive ? ['#ff007f', '#00f0ff', '#ffcc00', '#7f00ff', '#00ff66', '#ff3300'] : ['#ff007f', '#00f0ff', '#7f00ff', '#ffcc00'];
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 / count) * i + Math.random() * 0.4;
-            const speed = 3 + Math.random() * 4;
+            const speed = activeCheats.mogActive ? (5 + Math.random() * 8) : (3 + Math.random() * 4);
             particles.push({
                 x: x, y: y,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
-                radius: 3 + Math.random() * 3,
+                radius: activeCheats.mogActive ? (2 + Math.random() * 6) : (3 + Math.random() * 3),
                 color: colors[Math.floor(Math.random() * colors.length)],
                 alpha: 1,
-                decay: 0.03 + Math.random() * 0.02
+                decay: activeCheats.mogActive ? (0.015 + Math.random() * 0.01) : (0.03 + Math.random() * 0.02)
             });
         }
     }
@@ -636,7 +661,7 @@
             ctxP.beginPath();
             ctxP.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctxP.fillStyle = p.color;
-            ctxP.shadowBlur = 6;
+            ctxP.shadowBlur = activeCheats.mogActive ? 12 : 6;
             ctxP.shadowColor = p.color;
             ctxP.fill();
             ctxP.restore();
@@ -737,7 +762,7 @@
             rebirthBtn.innerText = `🌟 Rebirth (Req: ${formatNum(req)} Beats)`;
         }
 
-        if (getActiveBpc() > 1000000 || activeCheats.dinoActive) {
+        if (getActiveBpc() > 1000000 || activeCheats.dinoActive || activeCheats.mogActive) {
             clickBtn.classList.add('hyper-pulse');
         } else {
             clickBtn.classList.remove('hyper-pulse');
@@ -887,6 +912,14 @@
             document.body.classList.add('dino-warp');
             cheatMsg.style.color = "#ff007f";
             cheatMsg.innerText = "🦖 DEV OVERRIDE: 3 QUADRILLION DINO-OGS ENGINE RUNNING. REALITY SHATTERED.";
+        } else if (code === 'MOG52.5') {
+            activeCheats.statCheatActive = true;
+            activeCheats.mogActive = true;
+            activeCheats.injectedBpc += 999000000000000000000000000000000;
+            activeCheats.injectedBps += 999000000000000000000000000000000;
+            document.body.classList.add('mog-overdrive');
+            cheatMsg.style.color = "#ff3300";
+            cheatMsg.innerText = "🪐 DEV OVERRIDE: 999 NONILLION MULTIVERSE STRIKE LOCKED IN. SCREEN OVERLOAD ACTIVATED.";
         } else {
             cheatMsg.style.color = "#ff007f";
             cheatMsg.innerText = "❌ Unknown backend terminal string override token instruction.";
@@ -900,11 +933,13 @@
         activeCheats.matrixActive = false;
         activeCheats.statCheatActive = false;
         activeCheats.dinoActive = false;
+        activeCheats.mogActive = false;
         activeCheats.injectedBpc = 0;
         activeCheats.injectedBps = 0;
         
         document.body.classList.remove('glass-ui');
         document.body.classList.remove('dino-warp');
+        document.body.classList.remove('mog-overdrive');
         stopMatrixRain();
         
         cheatMsg.style.color = "#aaa";
@@ -976,7 +1011,7 @@
     }, 100);
 
     setInterval(() => {
-        triggerManualSave(false);
+        triggerManualSave(silent=true);
     }, 30000);
 
     initUI();
