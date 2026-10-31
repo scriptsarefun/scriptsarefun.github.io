@@ -811,7 +811,7 @@
             promoMsg.style.color = "#00f0ff";
             promoMsg.innerText = "✅ Promo code 'freebeats' has been successfully redeemed on this save profile.";
         } else {
-            promoCodeInput.disabled = false;
+            promoCodeInput.disabled = true;
             submitPromoBtn.disabled = false;
             promoMsg.innerText = "";
         }
@@ -1016,6 +1016,24 @@
 
     initUI();
 </script>
+
+</body>
+</html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ding Sound Example</title>
+</head>
+<body>
+
+  <button onclick="playDing()">Play Ding</button>
+
+  <script>
+    function playDing() {
+      const ding = new Audio('https://www.soundjay.com/misc/sounds/small-bell-ring-01a.mp3');
+      ding.play();
+    }
+  </script>
 
 </body>
 </html>
