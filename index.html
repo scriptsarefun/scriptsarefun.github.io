@@ -527,8 +527,8 @@
         { id: 'bps_33', name: 'Genesis Ambient Stream', effect: 2000000000000000000000000, baseCost: 4500000000000000000000000000 },
         { id: 'bps_34', name: 'Omega Harmonic Matrix', effect: 12000000000000000000000000, baseCost: 35000000000000000000000000000 },
         { id: 'bps_35', name: 'Alpha-Omega Universal Master', effect: 150000000000000000000000000, baseCost: 250000000000000000000000000000 }
-        { id: 'bps_36', name: 'Ultra Millisecond flash', effect: 2000000000000000000000000000000000, basecost: 500000000000000000000000000000000}
     ];
+
     let clickingUpgrades = [];
     let backgroundTracks = [];
 
@@ -674,7 +674,7 @@
         if (matrixInterval) clearInterval(matrixInterval);
         matrixCanvas.width = window.innerWidth;
         matrixCanvas.height = window.innerHeight;
-        const katakana = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567899192019201920209102csjcnabbwbckbiewbceiwdbiqc2-21`312wqdp\]\[🧬🎵⚡✨🌀";
+        const katakana = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789🧬🎵⚡✨🌀";
         const fontSize = 16;
         const columns = matrixCanvas.width / fontSize;
         const rainDrops = Array.from({ length: columns }).fill(1);
@@ -907,27 +907,19 @@
         } else if (code === 'DINOmajj{ogs}') {
             activeCheats.statCheatActive = true;
             activeCheats.dinoActive = true;
-            activeCheats.injectedBpc += 3000000000000000000000000000000000000000000;
-            activeCheats.injectedBps += 0;
+            activeCheats.injectedBpc += 3000000000000000;
+            activeCheats.injectedBps += 3000000000000000;
             document.body.classList.add('dino-warp');
             cheatMsg.style.color = "#ff007f";
             cheatMsg.innerText = "🦖 DEV OVERRIDE: 3 QUADRILLION DINO-OGS ENGINE RUNNING. REALITY SHATTERED.";
         } else if (code === 'MOG52.5') {
             activeCheats.statCheatActive = true;
             activeCheats.mogActive = true;
-            activeCheats.injectedBpc += 99900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;
-            activeCheats.injectedBps += 9990000000000000000000000000000000000000000000000000000000000000000000000000;
+            activeCheats.injectedBpc += 999000000000000000000000000000000;
+            activeCheats.injectedBps += 999000000000000000000000000000000;
             document.body.classList.add('mog-overdrive');
             cheatMsg.style.color = "#ff3300";
-            cheatMsg.innerText = "🪐 DEV OVERRIDE:  MULTIVERSE STRIKE LOCKED IN. SCREEN OVERLOAD ACTIVATED.";
-        }else if (code === '999true') {
-           activeCheats.statCheatActive = true;
-           activeCheats.999Active = true;
-           activeCheats.injectedBpc += 999999999999999999999102420491271104712047120941709471124801294710247120471209478888888888888888888888888888888888888888
-           active.Cheats.injectedBps += 8480948102480129481209480918409184091284091840918409182409128409128409128401980498210481294081294812049128401298401298409194810924812094
-           document.body.classList.add('999-destruction');
-           cheatMsg.style.color = "#87CEEB";
-           cheatMsg.innerText = " DEV OVERRIDE: WE ARE GOING CRAZY!!!!.";
+            cheatMsg.innerText = "🪐 DEV OVERRIDE: 999 NONILLION MULTIVERSE STRIKE LOCKED IN. SCREEN OVERLOAD ACTIVATED.";
         } else {
             cheatMsg.style.color = "#ff007f";
             cheatMsg.innerText = "❌ Unknown backend terminal string override token instruction.";
