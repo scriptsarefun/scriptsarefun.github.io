@@ -917,12 +917,195 @@ input, select {
     }
 }
 
+
+/* Clean hover/focus code launcher */
+.code-hub {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 20;
+    font-family: inherit;
+}
+.code-hub-trigger {
+    border: 1px solid rgba(0, 240, 255, .55);
+    border-radius: 999px;
+    padding: 11px 17px;
+    color: #fff;
+    background: rgba(17, 20, 35, .88);
+    box-shadow: 0 0 18px rgba(0, 240, 255, .18);
+    font-weight: 800;
+    letter-spacing: .08em;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: .2s ease;
+}
+.code-hub:hover .code-hub-trigger,
+.code-hub:focus-within .code-hub-trigger {
+    border-color: #ff007f;
+    box-shadow: 0 0 22px rgba(255, 0, 127, .35);
+    transform: translateY(-1px);
+}
+.code-hub-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: min(310px, calc(100vw - 36px));
+    padding: 16px;
+    border: 1px solid rgba(0, 240, 255, .35);
+    border-radius: 16px;
+    background: rgba(15, 18, 31, .97);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .5), 0 0 24px rgba(0, 240, 255, .12);
+    text-align: left;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-7px);
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+}
+.code-hub:hover .code-hub-panel,
+.code-hub:focus-within .code-hub-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+.code-hub-panel h3 {
+    margin: 0 0 5px;
+    color: #00f0ff;
+    font-size: 1rem;
+}
+.code-hub-panel .code-hub-subtitle {
+    margin: 0 0 13px;
+    color: #aeb8ca;
+    font-size: .8rem;
+    line-height: 1.4;
+}
+.promo-code-entry {
+    padding: 11px 12px;
+    margin: 9px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 204, 0, .35);
+    background: rgba(255, 204, 0, .07);
+}
+.promo-code-entry strong {
+    display: block;
+    color: #ffdf65;
+    font-size: 1.05rem;
+    letter-spacing: .08em;
+}
+.promo-code-entry span {
+    display: block;
+    margin-top: 4px;
+    color: #c5cbd7;
+    font-size: .78rem;
+    line-height: 1.35;
+}
+.code-hub-hint {
+    color: #8994a8;
+    font-size: .72rem;
+    line-height: 1.4;
+    margin: 10px 1px 0;
+}
+@media (max-width: 600px) {
+    .code-hub { top: 10px; right: 10px; }
+    .code-hub-trigger { padding: 9px 13px; font-size: .8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .code-hub-trigger, .code-hub-panel { transition: none; }
+}
+
+
+/* BPS / BPC quick-jump list */
+.jump-hub {
+    position: fixed; top: 18px; left: 18px; z-index: 21;
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    padding: 9px 11px; border: 1px solid rgba(139,116,255,.45);
+    border-radius: 16px; background: rgba(13,16,35,.94);
+    box-shadow: 0 8px 28px rgba(0,0,0,.35), 0 0 18px rgba(139,92,255,.15);
+    backdrop-filter: blur(12px); font-size: .75rem; font-weight: 900;
+}
+.jump-hub span { color: #9eafd8; letter-spacing: .12em; padding: 0 4px; }
+.jump-hub button {
+    padding: 8px 12px; border: 1px solid rgba(34,230,255,.4);
+    border-radius: 9px; color: #fff; cursor: pointer;
+    background: linear-gradient(110deg,#263b68,#54266e);
+}
+.jump-hub button:hover { border-color: #22e6ff; box-shadow: 0 0 14px rgba(34,230,255,.28); }
+#bpcSection, #bpsSection { scroll-margin-top: 24px; }
+@media (max-width: 600px) {
+    .jump-hub { top: 10px; left: 10px; gap: 4px; padding: 7px; }
+    .jump-hub span { display: none; }
+    .jump-hub button { padding: 7px 9px; font-size: .72rem; }
+    .code-hub { top: 10px; right: 10px; }
+}
+
+#loadingScreen{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#173b38,#071512 55%,#030807);transition:opacity .55s,visibility .55s}#loadingScreen.loading-done{opacity:0;visibility:hidden;pointer-events:none}.loading-card{width:min(88vw,480px);padding:30px 24px;text-align:center;border:1px solid #6fffbf;border-radius:22px;background:#051411ed;box-shadow:0 0 45px #00ff9930}.loading-logo{font-size:clamp(2rem,7vw,3.2rem);font-weight:1000;color:#8effc2;text-shadow:0 0 18px #00ff99}.loading-sub{color:#d6ffe9;margin:8px 0 24px;letter-spacing:3px;font-size:.78rem}.loading-track{height:13px;border-radius:99px;overflow:hidden;background:#17352b}#loadingBar{width:0;height:100%;background:linear-gradient(90deg,#00d68a,#d7ff79);transition:width .22s}#loadingPercent{color:#9cffc6;font-weight:800;margin-top:12px}#loadingTip{color:#a9c9ba;font-size:.86rem;min-height:20px;margin-top:12px}
+.christmas-event{margin:20px 0;padding:18px;border-radius:14px;text-align:left;border:1px solid #e8f7ff;background:linear-gradient(120deg,#0a5336f5,#731227f5);box-shadow:0 0 22px #28ffa026}.christmas-event h2{margin:0 0 7px;color:white;text-shadow:0 0 12px #8effc2}.christmas-event p{color:#f1fff7;margin:7px 0}.holiday-stats{color:#ffe58a;font-weight:800;font-size:1.05rem;margin:12px 0}.holiday-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.holiday-actions button{flex:1 1 170px;padding:11px;border-radius:8px;border:1px solid #d6ffe9;background:#0d593d;color:white;font-weight:800;cursor:pointer}.holiday-actions button:disabled{opacity:.45;cursor:not-allowed}.holiday-actions button:hover:not(:disabled){background:#128654;box-shadow:0 0 12px #65ffb5}#holidayMessage{min-height:20px;color:#ffe58a;font-weight:700;margin-top:10px}.snowflake{position:fixed;top:-24px;z-index:3;pointer-events:none;color:white;text-shadow:0 0 8px #bcecff;animation:snowFall linear infinite;opacity:.8}@keyframes snowFall{to{transform:translate3d(35px,110vh,0) rotate(360deg)}}
 </style>
 </head>
 <body>
+<div id="loadingScreen" role="status" aria-live="polite"><div class="loading-card"><div style="font-size:2.2rem">🎄 ❄️ 🎁</div><div class="loading-logo">BEAT CLICKER</div><div class="loading-sub">NEON DELUXE • HOLIDAY EDITION</div><div class="loading-track"><div id="loadingBar"></div></div><div id="loadingPercent">0%</div><div id="loadingTip">Warming up the sound system...</div></div></div>
 
 <canvas id="matrixCanvas"></canvas>
 <canvas id="particleCanvas"></canvas>
+
+
+<div class="code-hub">
+    <button class="code-hub-trigger" type="button" aria-label="Show promo codes">
+        🎟 CODES
+    </button>
+    <div class="code-hub-panel" role="region" aria-label="Available promo codes">
+        <h3>✨ Promo Codes</h3>
+        <p class="code-hub-subtitle">Hover here to peek at the current bonus codes.</p>
+        <div class="promo-code-entry">
+            <strong>freebeats</strong>
+            <span>5,000 beats · Original bonus</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>rhythm2026</strong>
+            <span>25,000 beats · Rhythm starter pack</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>neonparty</strong>
+            <span>100,000 beats · Neon celebration</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>bassdrop</strong>
+            <span>250,000 beats · Bass boost bonus</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>starpower</strong>
+            <span>1,000,000 beats · Superstar reward</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>beatstorm</strong>
+            <span>5,000,000 beats · Mega rhythm reward</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>CLICKFRENZY</strong>
+            <span>10,000,000 beats · Click combo bonus</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>MEGABASS</strong>
+            <span>25,000,000 beats · Deep bass reward</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>GALAXYBEAT</strong>
+            <span>100,000,000 beats · Galactic gift</span>
+        </div>
+        <div class="promo-code-entry">
+            <strong>INFINITY</strong>
+            <span>500,000,000 beats · Infinity jackpot</span>
+        </div>
+        <p class="code-hub-hint">Enter a code in the Promo Voucher Desk farther down the page. Each promo can be redeemed once per save. These are separate from developer override codes.</p>
+    </div>
+</div>
+
+<nav class="jump-hub" aria-label="Upgrade section shortcuts">
+    <span>⚡ JUMP TO</span>
+    <button type="button" data-jump="backgroundTracks">BPS</button>
+    <button type="button" data-jump="clickingUpgrades">BPC</button>
+</nav>
 
 <div class="container">
     <header class="brand-header">
@@ -938,6 +1121,7 @@ input, select {
         <div class="stat">Beats Per Second (BPS): <span id="bps">0</span></div>
     </div>
 
+    <section class="christmas-event" id="christmasEvent"><h2>🎄 CHRISTMAS BEAT FESTIVAL 🎅</h2><p>Holiday season has arrived in the Beat Factory! Click to collect Jingle Bells and trade them for festive beat boosts.</p><div class="holiday-stats">🔔 Jingle Bells: <span id="holidayTokens">0</span></div><div class="holiday-actions"><button type="button" id="holidaySmallReward">🎁 Trade 25 Bells → 100K Beats</button><button type="button" id="holidayBigReward">🌟 Trade 100 Bells → 1M Beats</button></div><div id="holidayMessage" aria-live="polite">✨ Every click earns 1 Jingle Bell!</div></section>
     <div class="action-row">
         <button class="action-btn" id="saveBtn">💾 Save Game</button>
         <button class="action-btn" id="rebirthBtn" disabled>🌟 Rebirth (Req: 1M Beats)</button>
@@ -971,7 +1155,7 @@ input, select {
 
     <div class="input-box-container" style="border-color: #ffcc00; background-color: #1c1912;">
         <h4 style="margin: 0 0 5px 0; color: #ffcc00;">🎟️ Player Promotional Voucher Desk</h4>
-        <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: #bbb;">⚠️ 'freebeats' code expires on: December 31, 2026</p>
+        <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: #bbb;">Enter any code shown in the 🎟 CODES menu. Each code works once per save.</p>
         <input type="text" id="promoCodeInput" placeholder="Enter promo code...">
         <button id="submitPromoBtn">Redeem Code</button>
         <div id="promoMsg" class="validation-msg"></div>
@@ -984,10 +1168,10 @@ input, select {
         <div id="cheatMsg" class="validation-msg"></div>
     </div>
 
-    <h3 class="section-title">Buy & Unlock Clicking Upgrades</h3>
+    <h3 class="section-title" id="bpcSection">🖱️ BPC — Beats Per Click</h3>
     <div class="grid" id="clickingUpgrades"></div>
 
-    <h3 class="section-title">Buy & Unlock Background Tracks</h3>
+    <h3 class="section-title" id="bpsSection">🎵 BPS — Beats Per Second</h3>
     <div class="grid" id="backgroundTracks"></div>
 
     <a href="#" class="back-link" id="realityAnchor">⬅ Go Back to Reality</a>
@@ -1002,7 +1186,9 @@ input, select {
         bps: 0,
         rebirths: 0,
         totalTracksBought: 0,
-        promoRedeemed: false
+        promoRedeemed: false,
+        promoRedeemedCodes: [],
+        holidayTokens: 0
     };
 
     let activeCheats = {
@@ -1174,6 +1360,8 @@ input, select {
     const clickingContainer = document.getElementById('clickingUpgrades');
     const backgroundContainer = document.getElementById('backgroundTracks');
     const achievementsContainer = document.getElementById('achievementsList');
+    const holidayTokensEl=document.getElementById('holidayTokens'), holidayMessageEl=document.getElementById('holidayMessage');
+    const holidaySmallRewardBtn=document.getElementById('holidaySmallReward'), holidayBigRewardBtn=document.getElementById('holidayBigReward');
 
     const matrixCanvas = document.getElementById('matrixCanvas');
     const ctxM = matrixCanvas.getContext('2d');
@@ -1402,6 +1590,8 @@ input, select {
 
     function updateUI() {
         scoreEl.innerText = formatNum(Math.floor(state.beats));
+        state.holidayTokens=Math.max(0,Number(state.holidayTokens)||0); holidayTokensEl.innerText=formatNum(Math.floor(state.holidayTokens));
+        holidaySmallRewardBtn.disabled=state.holidayTokens<25; holidayBigRewardBtn.disabled=state.holidayTokens<100;
         bpcEl.innerText = formatNum(getActiveBpc());
         bpsEl.innerText = formatNum(getActiveBps());
         
@@ -1458,22 +1648,25 @@ input, select {
     }
 
     function evaluatePromoUIState() {
-        if (state.promoRedeemed) {
-            promoCodeInput.disabled = true;
-            submitPromoBtn.disabled = true;
-            promoCodeInput.value = "";
-            promoCodeInput.placeholder = "Promo already redeemed!";
+        if (!Array.isArray(state.promoRedeemedCodes)) state.promoRedeemedCodes = [];
+        // Migrate older saves that only tracked the original freebeats voucher.
+        if (state.promoRedeemed && !state.promoRedeemedCodes.includes('freebeats')) {
+            state.promoRedeemedCodes.push('freebeats');
+        }
+        promoCodeInput.disabled = false;
+        submitPromoBtn.disabled = false;
+        promoCodeInput.placeholder = "Enter promo code...";
+        if (state.promoRedeemedCodes.length) {
             promoMsg.style.color = "#00f0ff";
-            promoMsg.innerText = "✅ Promo code 'freebeats' has been successfully redeemed on this save profile.";
+            promoMsg.innerText = `🎟 ${state.promoRedeemedCodes.length} promo code(s) redeemed on this save. Each listed code can be used once.`;
         } else {
-            promoCodeInput.disabled = false;
-            submitPromoBtn.disabled = false;
             promoMsg.innerText = "";
         }
     }
 
     clickBtn.addEventListener('click', (e) => {
         state.beats += getActiveBpc();
+        state.holidayTokens=(state.holidayTokens||0)+1;
         playDrumstickSound();
         createClickBurst(e.clientX, e.clientY);
         updateUI();
@@ -1520,20 +1713,52 @@ input, select {
         }
     });
 
+    const promoRewards = {
+        freebeats:   { beats: 5000,    label: '5,000 beats' },
+        rhythm2026:  { beats: 25000,   label: '25,000 beats' },
+        neonparty:   { beats: 100000,  label: '100,000 beats' },
+        bassdrop:    { beats: 250000,  label: '250,000 beats' },
+        starpower:   { beats: 1000000, label: '1,000,000 beats' },
+        beatstorm:   { beats: 5000000, label: '5,000,000 beats' },
+        clickfrenzy: { beats: 10000000, label: '10,000,000 beats' },
+        megabass:    { beats: 25000000, label: '25,000,000 beats' },
+        galaxybeat:  { beats: 100000000, label: '100,000,000 beats' },
+        infinity:    { beats: 500000000, label: '500,000,000 beats' }
+    };
+
+    document.querySelectorAll('.jump-hub [data-jump]').forEach(button => {
+        button.addEventListener('click', () => {
+            const target = document.getElementById(button.dataset.jump);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
     submitPromoBtn.addEventListener('click', () => {
-        if (state.promoRedeemed) return;
-        const val = promoCodeInput.value.trim();
-        
-        if (val === 'freebeats') {
-            state.beats += 5000;
-            state.promoRedeemed = true;
+        const val = promoCodeInput.value.trim().toLowerCase();
+        if (!Array.isArray(state.promoRedeemedCodes)) state.promoRedeemedCodes = [];
+        if (state.promoRedeemed && !state.promoRedeemedCodes.includes('freebeats')) {
+            state.promoRedeemedCodes.push('freebeats');
+        }
+
+        const reward = promoRewards[val];
+        if (reward) {
+            if (state.promoRedeemedCodes.includes(val)) {
+                promoMsg.style.color = "#ffcc00";
+                promoMsg.innerText = "⚠️ That promo code has already been redeemed on this save.";
+                return;
+            }
+            state.beats += reward.beats;
+            state.promoRedeemedCodes.push(val);
+            state.promoRedeemed = state.promoRedeemedCodes.includes('freebeats');
+            promoCodeInput.value = "";
             evaluatePromoUIState();
             triggerManualSave(true);
             updateUI();
-            alert('Promo Accepted! 5,000 beats have been injected directly into your profile core.');
+            promoMsg.style.color = "#00f0ff";
+            promoMsg.innerText = `✅ Promo accepted! ${reward.label} added to your balance.`;
         } else {
             promoMsg.style.color = "#ff007f";
-            promoMsg.innerText = "❌ Invalid promotional voucher track entered.";
+            promoMsg.innerText = "❌ Invalid promotional voucher. Check the Codes menu and try again.";
         }
     });
 
@@ -1602,6 +1827,8 @@ input, select {
         updateUI();
     });
 
+    holidaySmallRewardBtn.addEventListener('click',()=>{if((state.holidayTokens||0)<25)return;state.holidayTokens-=25;state.beats+=100000;holidayMessageEl.innerText='🎁 You traded 25 Jingle Bells for 100,000 beats!';updateUI();triggerManualSave(true);});
+    holidayBigRewardBtn.addEventListener('click',()=>{if((state.holidayTokens||0)<100)return;state.holidayTokens-=100;state.beats+=1000000;holidayMessageEl.innerText='🌟 HOLIDAY JACKPOT! 100 Bells traded for 1,000,000 beats!';updateUI();triggerManualSave(true);});
     saveBtn.addEventListener('click', () => triggerManualSave(false));
 
     function triggerManualSave(silent = false) {
@@ -1664,6 +1891,7 @@ input, select {
     setInterval(() => {
         if (getActiveBps() > 0) {
             state.beats += (getActiveBps() / 10);
+            state.holidayTokens=(state.holidayTokens||0)+(Math.log10(getActiveBps()+1)/10);
             updateUI();
         }
     }, 100);
@@ -1673,6 +1901,10 @@ input, select {
     }, 30000);
 
     initUI();
+    for(let i=0;i<28;i++){const f=document.createElement('span');f.className='snowflake';f.textContent=i%5===0?'❄':'•';f.style.left=(Math.random()*100)+'vw';f.style.fontSize=(10+Math.random()*15)+'px';f.style.animationDuration=(8+Math.random()*12)+'s';f.style.animationDelay=(-Math.random()*18)+'s';document.body.appendChild(f);}
+    const loadingScreen=document.getElementById('loadingScreen'),loadingBar=document.getElementById('loadingBar'),loadingPercent=document.getElementById('loadingPercent'),loadingTip=document.getElementById('loadingTip');
+    const tips=['Warming up the sound system...','Tuning the neon instruments...','Wrapping your bonus upgrades...','Loading the Christmas Beat Festival...','Ready to drop the beat!'];let progress=0;
+    const loadTimer=setInterval(()=>{progress=Math.min(100,progress+10+Math.floor(Math.random()*13));loadingBar.style.width=progress+'%';loadingPercent.textContent=progress+'%';loadingTip.textContent=tips[Math.min(4,Math.floor(progress/21))];if(progress>=100){clearInterval(loadTimer);setTimeout(()=>loadingScreen.classList.add('loading-done'),350);}},115);
 </script>
 
 </body>
